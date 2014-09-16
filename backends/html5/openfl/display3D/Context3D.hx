@@ -62,7 +62,7 @@ class Context3D
 	private var scrollRect:Rectangle;
 	public static var MAX_SAMPLERS:Int = 8;
    
-    public function new() 
+    public function new(oglView:OpenGLView) 
     {
         disposed = false;
         vertexBuffersCreated = new Array();
@@ -79,7 +79,7 @@ class Context3D
 
         var stage = Lib.current.stage;
 
-        ogl = new OpenGLView();
+        ogl = oglView;
         ogl.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
         scrollRect = ogl.scrollRect.clone();
         ogl.width = stage.stageWidth;

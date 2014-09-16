@@ -1,4 +1,5 @@
 package openfl.display3D;
+import openfl.display.OpenGLView;
 import openfl.geom.Matrix3D;
 import openfl.gl.GL;
 import openfl.gl.GLUniformLocation;
@@ -11,9 +12,9 @@ class AGLSLContext3D extends Context3D
 {
 	private var _yFlip:Float;
  
-	public function new ()
+	public function new (oglView:OpenGLView)
 	{
-		super();
+		super(oglView);
 		_yFlip = -1;
 	}
 
