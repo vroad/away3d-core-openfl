@@ -1,5 +1,6 @@
 package openfl.display;
 
+import openfl.display3D.AGLSLContext3D;
 import openfl.display3D.Context3D;
 import openfl.events.ErrorEvent;
 import openfl.events.Event;
@@ -25,4 +26,21 @@ class Stage3D extends EventDispatcher
           dispatchEvent(new ErrorEvent(ErrorEvent.ERROR));
       }
    }
+   
+   public function requestAGLSLContext3D(?context3DRenderMode:String =  "auto"):Void 
+    {
+        #if !flash
+
+        if (OpenGLView.isSupported) {
+            context3D = new AGLSLContext3D();   
+            dispatchEvent(new Event(Event.CONTEXT3D_CREATE));
+        } else
+            dispatchEvent(new ErrorEvent(ErrorEvent.ERROR));  
+
+        #else
+
+        requestContext3D(context3DRenderMode);
+
+        #end
+    }
 }
