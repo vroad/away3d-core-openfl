@@ -31,6 +31,7 @@ class AGLSLCompiler {
 		default:
 			throw "Unknown Context3DProgramType";
 		}
+		data.position = 0;
 		var description : Description = tokenizer.decribeAGALByteArray(data);
 		var parser : AGLSLParser = new AGLSLParser();
 		this.glsl = parser.parse(description);
