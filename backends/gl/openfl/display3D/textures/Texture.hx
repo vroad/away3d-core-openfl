@@ -12,9 +12,8 @@ class Texture extends TextureBase
 {
 	public var optimizeForRenderToTexture:Bool;
 	
-	public function new(glTexture:GLTexture, optimize:Bool, width : Int, height : Int) {
+	public function new(glTexture:GLTexture, optimize:Bool = false, width : Int, height : Int) {
 		optimizeForRenderToTexture = optimize;
-        if (optimizeForRenderToTexture==null) optimizeForRenderToTexture = false;
         
         super (glTexture, width , height);
 	}

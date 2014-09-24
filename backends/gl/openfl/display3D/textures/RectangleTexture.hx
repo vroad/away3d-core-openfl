@@ -14,9 +14,8 @@ class RectangleTexture extends TextureBase
 {
     public var optimizeForRenderToTexture:Bool;
     
-    public function new(glTexture:GLTexture, optimize:Bool, width : Int, height : Int) {
+    public function new(glTexture:GLTexture, optimize:Bool = false, width : Int, height : Int) {
 		optimizeForRenderToTexture = optimize;
-        if (optimizeForRenderToTexture==null) optimizeForRenderToTexture = false;
         
         super (glTexture, width , height);
 	}
@@ -26,13 +25,19 @@ class RectangleTexture extends TextureBase
 	//}
 
     public function uploadFromBitmapData (bitmapData:BitmapData, miplevel:Int = 0):Void {
+#if html5
         var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
         width = bitmapData.width;
         height = bitmapData.height;
         uploadFromUInt8Array(p.byteView);
+#else
+        var p = BitmapData.getRGBAPixels(bitmapData);
+        uploadFromByteArray(p, 0);
+#end
     }
 
     public function uploadFromByteArray(data:ByteArray, byteArrayOffset:Int):Void {
+#if html5
         var source = new UInt8Array(data.length);
         data.position = byteArrayOffset;
         var i:Int = 0;
@@ -40,7 +45,10 @@ class RectangleTexture extends TextureBase
             source[i] = data.readUnsignedByte();
             i++;
         }
-
+#else
+        //TODO byteArrayOffset ?
+        var source = new UInt8Array(data);
+#end
         uploadFromUInt8Array(source);
     }
     

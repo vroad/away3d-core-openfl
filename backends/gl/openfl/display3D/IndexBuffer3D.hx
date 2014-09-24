@@ -4,7 +4,6 @@ import openfl.gl.GL;
 import openfl.gl.GLBuffer;
 import openfl.utils.Int16Array;
 import openfl.utils.ByteArray;
-import openfl.Vector;
 
 class IndexBuffer3D 
 {

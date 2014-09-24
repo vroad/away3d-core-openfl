@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension>
 	
-	<set name="openfl-html5" />
-	<haxedef name="openfl-html5" />
-	
-	<template path="templates" />
+	<set name="openfl-html5" if="html5" />
+	<haxedef name="openfl-html5" if="html5" />
+
+	<set name="openfl-native" if="native" />
+	<haxedef name="openfl-native" if="native" />
 	
 	<haxeflag name="--remap" value="flash:openfl" />
 	
