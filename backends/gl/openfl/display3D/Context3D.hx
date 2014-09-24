@@ -430,6 +430,7 @@ class Context3D
         
         if (Std.is (texture, openfl.display3D.textures.Texture)) {
 
+            GL.bindTexture(GL.TEXTURE_2D, cast(texture, openfl.display3D.textures.Texture).glTexture);
             switch(wrap){
                 case Context3DWrapMode.CLAMP:
                     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
@@ -459,9 +460,11 @@ class Context3D
                     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR); 
             } 
         } else if (Std.is (texture, openfl.display3D.textures.RectangleTexture)) {
+            
+            GL.bindTexture(GL.TEXTURE_2D, cast(texture, openfl.display3D.textures.RectangleTexture).glTexture);
             GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
             GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-
+            
             switch(filter){
                 case Context3DTextureFilter.LINEAR:
                     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
@@ -469,11 +472,11 @@ class Context3D
                 case Context3DTextureFilter.NEAREST:
                     GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
             }
- 
+
             GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
-        }
-        else if (Std.is (texture, openfl.display3D.textures.CubeTexture)) {
-            
+        } else if (Std.is (texture, openfl.display3D.textures.CubeTexture)) {
+            GL.bindTexture(GL.TEXTURE_CUBE_MAP, cast(texture, openfl.display3D.textures.CubeTexture).glTexture);
+
             switch(wrap){
                 case Context3DWrapMode.CLAMP:
                     GL.texParameteri(GL.TEXTURE_CUBE_MAP, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
