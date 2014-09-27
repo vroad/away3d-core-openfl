@@ -41,6 +41,8 @@ class Context3D
     private var drawing:Bool;
 
     private var disposed : Bool;
+    
+    private var renderToTexture : Bool;
 
     // to keep track of stuff to dispose when calling dispose
     private var vertexBuffersCreated : Array<VertexBuffer3D>;
@@ -48,13 +50,11 @@ class Context3D
     private var programsCreated : Array<Program3D>;
     private var texturesCreated : Array<TextureBase>;
 
-    private var framebuffer : GLFramebuffer;
-	private var renderbuffer : GLRenderbuffer;
-    private var depthbuffer : GLRenderbuffer;
-    private var stencilbuffer : GLRenderbuffer;
-
     private var samplerParameters :Array<SamplerState>; //TODO : use Tupple3
 	private var scrollRect:Rectangle;
+    private var scissorRectangle:Rectangle;
+    private var rttWidth:Int;
+    private var rttHeight:Int;
 	public static var MAX_SAMPLERS:Int = 8;
    
     public function new(oglView:OpenGLView) 
@@ -64,6 +64,7 @@ class Context3D
         #end
         
         disposed = false;
+        renderToTexture = false;
         vertexBuffersCreated = new Array();
         indexBuffersCreated = new Array();
         programsCreated = new Array();
@@ -101,11 +102,16 @@ class Context3D
         }
 
         //GL.depthMask(true);
+        if (scissorRectangle != null)
+            GL.disable(GL.SCISSOR_TEST);
         GL.clearColor(red, green, blue, alpha);
         GL.clearDepth(depth);
         GL.clearStencil(stencil);
 
         GL.clear(mask);
+        
+        if (scissorRectangle != null)
+            GL.enable(GL.SCISSOR_TEST);
     }
 
     public function configureBackBuffer(width:Int, height:Int, antiAlias:Int, enableDepthAndStencil:Bool = true):Void 
@@ -122,8 +128,9 @@ class Context3D
         scrollRect = ogl.scrollRect.clone();
         GL.viewport(Std.int(scrollRect.x),Std.int(scrollRect.y),Std.int(scrollRect.width),Std.int(scrollRect.height));
         #if ios
-        defaultFrameBuffer = new GLFramebuffer(GL.version, 1); //TODO: GL.getParameter(GL.FRAMEBUFFER_BINDING));
+        //defaultFrameBuffer = new GLFramebuffer(GL.version, 1); //TODO: GL.getParameter(GL.FRAMEBUFFER_BINDING));
         #end
+        updateScissorRectangle();
     }
 
     public function createCubeTexture(size:Int, format:Context3DTextureFormat, optimizeForRenderToTexture:Bool, streamingLevels:Int = 0):CubeTexture 
@@ -197,16 +204,6 @@ class Context3D
             texture.dispose();
         }
         texturesCreated = null;
-
-        if(framebuffer != null){
-            GL.deleteFramebuffer(framebuffer);
-            framebuffer = null;
-        }
-		
-        if(renderbuffer != null){
-            GL.deleteRenderbuffer(renderbuffer);
-            renderbuffer = null;
-        }
 		
         disposed = true;
     }
@@ -377,21 +374,22 @@ class Context3D
     public function setRenderToBackBuffer ():Void {
         GL.bindFramebuffer(GL.FRAMEBUFFER, null );
         GL.viewport(Std.int(scrollRect.x),Std.int(scrollRect.y),Std.int(scrollRect.width),Std.int(scrollRect.height));
+        renderToTexture = false;
+        updateScissorRectangle();
     }
 
     // TODO : currently does not work (framebufferStatus always return zero)
     public function setRenderToTexture (texture:TextureBase, enableDepthAndStencil:Bool = false, antiAlias:Int = 0, surfaceSelector:Int = 0):Void {		 
-        
-        if (framebuffer == null) 
-            framebuffer = GL.createFramebuffer();
+        var rt:RenderTarget = texture.renderTarget;
+        if (texture.renderTarget == null)
+        {
+            rt = texture.renderTarget = new RenderTarget();
+            rt.framebuffer = GL.createFramebuffer();
+            rt.renderbuffer = GL.createRenderbuffer();
+        }
 
-        GL.bindFramebuffer(GL.FRAMEBUFFER, framebuffer);
-
-        if (renderbuffer == null) 
-            renderbuffer = GL.createRenderbuffer();
-
-
-        GL.bindRenderbuffer(GL.RENDERBUFFER, renderbuffer);
+        GL.bindFramebuffer(GL.FRAMEBUFFER, rt.framebuffer);
+        GL.bindRenderbuffer(GL.RENDERBUFFER, rt.renderbuffer);
         //#if ios
         //GL.renderbufferStorage(GL.RENDERBUFFER, 0x88F0, texture.width, texture.height);
         //#else
@@ -404,10 +402,14 @@ class Context3D
             GL.enable(GL.DEPTH_TEST);
             GL.enable(GL.STENCIL_TEST);
 
-            GL.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_STENCIL_ATTACHMENT, GL.RENDERBUFFER, renderbuffer);
+            GL.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_STENCIL_ATTACHMENT, GL.RENDERBUFFER, rt.renderbuffer);
         }
 
         GL.viewport(0, 0, texture.width, texture.height); 
+        renderToTexture = true;
+        rttWidth = texture.width;
+        rttHeight = texture.height;
+        updateScissorRectangle();
     }
 
     public function setSamplerStateAt(sampler:Int, wrap:Context3DWrapMode, filter:Context3DTextureFilter, mipfilter:Context3DMipFilter):Void
@@ -510,14 +512,29 @@ class Context3D
 
     public function setScissorRectangle(rectangle:Rectangle):Void 
     {
+        scissorRectangle = rectangle;
         // TODO test it
-    	if (rectangle == null) {
+    	if (scissorRectangle == null) {
     		GL.disable(GL.SCISSOR_TEST);
     		return;
     	}
 
     	GL.enable(GL.SCISSOR_TEST);
-        GL.scissor(Std.int(rectangle.x), Std.int(scrollRect.height - rectangle.y - rectangle.height), Std.int(rectangle.width), Std.int(rectangle.height));
+        updateScissorRectangle();
+    }
+    
+    private function updateScissorRectangle()
+    {
+        if (scissorRectangle == null)
+            return;
+        
+        //var width:Int = renderToTexture ? rttWidth : scrollRect.width;
+        var height:Float = renderToTexture ? rttHeight : scrollRect.height;
+        GL.scissor(Std.int(scissorRectangle.x),
+            Std.int(height - scissorRectangle.y - scissorRectangle.height),
+            Std.int(scissorRectangle.width),
+            Std.int(scissorRectangle.height)
+        );
     }
 
     public function setStencilActions(?triangleFace:Int, ?compareMode:Int, ?actionOnBothPass:Int, ?actionOnDepthFail:Int, ?actionOnDepthPassStencilFail:Int):Void 

@@ -4,6 +4,7 @@
 
 package openfl.display3D.textures;
 
+import openfl.display3D.RenderTarget;
 import openfl.gl.GL;
 import openfl.gl.GLTexture;
 import openfl.gl.GLFramebuffer;
@@ -14,6 +15,7 @@ class TextureBase extends EventDispatcher
 	public var width : Int;
     public var height : Int;
     public var glTexture:GLTexture;
+    public var renderTarget:RenderTarget;
 
     public function new(glTexture:GLTexture, width : Int=0, height : Int=0) 
     {
@@ -26,5 +28,7 @@ class TextureBase extends EventDispatcher
     public function dispose():Void 
     {
         GL.deleteTexture(glTexture);
+        if (renderTarget != null)
+            renderTarget.dispose();
     }
 }
