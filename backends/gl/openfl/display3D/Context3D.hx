@@ -18,11 +18,7 @@ import openfl.gl.GLProgram;
 import openfl.utils.ByteArray;
 import openfl.Lib;
 
-#if html5
 typedef Location = openfl.gl.GLUniformLocation;
-#else
-typedef Location = Int;
-#end
 
 class Context3D 
 {
