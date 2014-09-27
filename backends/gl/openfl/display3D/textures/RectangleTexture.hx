@@ -25,7 +25,7 @@ class RectangleTexture extends TextureBase
 		// TODO
 	//}
 
-    public function uploadFromBitmapData (bitmapData:BitmapData, miplevel:Int = 0):Void {
+    public function uploadFromBitmapData (bitmapData:BitmapData):Void {
 #if html5
         var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
         width = bitmapData.width;
