@@ -18,6 +18,7 @@ class RectangleTexture extends TextureBase
 		optimizeForRenderToTexture = optimize;
         
         super (glTexture, width , height);
+        uploadFromUInt8Array(null);
 	}
 
 	//public function uploadCompressedTextureFromByteArray(data:ByteArray, byteArrayOffset:Int, async:Bool = false):Void {
@@ -36,7 +37,7 @@ class RectangleTexture extends TextureBase
 #end
     }
 
-    public function uploadFromByteArray(data:ByteArray, byteArrayOffset:Int):Void {
+    private function uploadFromByteArray(data:ByteArray, byteArrayOffset:Int):Void {
 #if html5
         var source = new UInt8Array(data.length);
         data.position = byteArrayOffset;
@@ -52,12 +53,10 @@ class RectangleTexture extends TextureBase
         uploadFromUInt8Array(source);
     }
     
-    public function uploadFromUInt8Array(data:UInt8Array)
+    private function uploadFromUInt8Array(data:UInt8Array)
     {
         GL.bindTexture (GL.TEXTURE_2D, glTexture);
 
-        if (optimizeForRenderToTexture)
-            GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, 1); 
         GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
         GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST); 			
         GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);

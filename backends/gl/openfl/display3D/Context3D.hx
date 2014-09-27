@@ -56,7 +56,6 @@ class Context3D
 	private var renderbuffer : GLRenderbuffer;
     private var depthbuffer : GLRenderbuffer;
     private var stencilbuffer : GLRenderbuffer;
-    private var defaultFrameBuffer : GLFramebuffer;
 
     private var samplerParameters :Array<SamplerState>; //TODO : use Tupple3
 	private var scrollRect:Rectangle;
@@ -64,6 +63,10 @@ class Context3D
    
     public function new(oglView:OpenGLView) 
     {
+        #if html5
+        GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, 1);
+        #end
+        
         disposed = false;
         vertexBuffersCreated = new Array();
         indexBuffersCreated = new Array();
@@ -376,7 +379,8 @@ class Context3D
     }
 
     public function setRenderToBackBuffer ():Void {
-        GL.bindFramebuffer(GL.FRAMEBUFFER, defaultFrameBuffer );
+        GL.bindFramebuffer(GL.FRAMEBUFFER, null );
+        GL.viewport(Std.int(scrollRect.x),Std.int(scrollRect.y),Std.int(scrollRect.width),Std.int(scrollRect.height));
     }
 
     // TODO : currently does not work (framebufferStatus always return zero)
@@ -406,9 +410,6 @@ class Context3D
 
             GL.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_STENCIL_ATTACHMENT, GL.RENDERBUFFER, renderbuffer);
         }
-
-        GL.bindTexture(GL.TEXTURE_2D, texture.glTexture);
-        GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, texture.width, texture.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 
         GL.viewport(0, 0, texture.width, texture.height); 
     }

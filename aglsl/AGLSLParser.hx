@@ -71,6 +71,12 @@ class AGLSLParser {
             }
 			i++;
         }
+        
+        // declrare functions
+        if (desc.header.type == "fragment")
+        {
+            header += "vec4 yFlipVec4(in vec4 value) {return vec4(value.x, 1.0 - value.y, value.z, value.w);}\n";
+        }
 
         // extra gl fluff: setup position and depth adjust temps
         if (desc.header.type == "vertex") {
@@ -164,7 +170,8 @@ class AGLSLParser {
                     if (desc.tokens[i].b.regtype == 0x5) {
                         // sampler dim
                         var texdim = ["2D", "Cube", "3D"][desc.tokens[i].b.dim];
-                        var texsize = ["vec2", "vec3", "vec3"][desc.tokens[i].b.dim];
+                        var texsize = ["vec2", "vec3", "vec4"][desc.tokens[i].b.dim];
+                        line = line.replace("%flipFunc", "yFlipVec4");
                         line = line.replace("%texdim", texdim);
                         line = line.replace("%texsize", texsize);
                         var texlod:String = "";
