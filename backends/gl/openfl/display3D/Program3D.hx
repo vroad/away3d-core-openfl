@@ -5,6 +5,7 @@
 package openfl.display3D;
 
 import openfl.gl.GL;
+import openfl.gl.GLActiveInfo;
 import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
 import openfl.gl.GLUniformLocation;
@@ -42,51 +43,61 @@ class Program3D
 
       if (GL.getProgramParameter(glProgram, GL.LINK_STATUS) == 0) 
       {
-         var result = GL.getProgramInfoLog(glProgram);
-         if (result != "") throw result;
+        var result = GL.getProgramInfoLog(glProgram);
+        if (result != "") throw result;
+      }
+      
+      for(i in 0 ... GL.getProgramParameter(glProgram, GL.ACTIVE_UNIFORMS))
+      {
+        var info:GLActiveInfo = GL.getActiveUniform(glProgram, i);
+        var loc:GLUniformLocation = GL.getUniformLocation(glProgram, info.name);
+        if (!yFlipSet && info.name == "yflip")
+        {
+          yFlip = loc;
+          yFlipSet = true;
+        }
+        else
+        {
+          var name:String = info.name.substr(0, 2);
+          var idx:Int = Std.parseInt(info.name.substr(2));
+          switch(info.name.substr(0, 2))
+          {
+            case "fc": glFCLocationMap[idx] = loc;
+            case "vc": glVCLocationMap[idx] = loc;
+            case "fs": glFSLocationMap[idx] = loc;
+          }
+        }
+      }
+      for(i in 0 ... GL.getProgramParameter(glProgram, GL.ACTIVE_ATTRIBUTES))
+      {
+        var info:GLActiveInfo = GL.getActiveAttrib(glProgram, i);
+        var name:String = info.name.substr(0, 2);
+        var idx:Int = Std.parseInt(info.name.substr(2));
+        if (name == "va")
+            glVALocationMap[idx] = i;
       }
     }
 
     var yFlip:GLUniformLocation;
     var yFlipSet:Bool = false;
     public inline function yFlipLoc():GLUniformLocation{
-      if(!yFlipSet){
-        yFlip = GL.getUniformLocation(glProgram,"yflip");
-        yFlipSet = true;
-      }
       return yFlip;
     }
 
     public inline function fsUniformLocationFromAgal(i:Int):GLUniformLocation{
-      /* This should be set when created, not each time location requested */
-      if(i>=glFCLocationMap.length){
-        glFCLocationMap[i] = GL.getUniformLocation(glProgram, "fc"+i);
-      }
       return glFCLocationMap[i];
     }
 
     public inline function vsUniformLocationFromAgal(i:Int):GLUniformLocation{
-      /* This should be set when created, not each time location requested */
-      if(i>=glVCLocationMap.length){
-        glVCLocationMap[i] = GL.getUniformLocation(glProgram, "vc"+i);
-      }
       return glVCLocationMap[i];
     }
 
     //sampler
     public inline function fsampUniformLocationFromAgal(i:Int):GLUniformLocation{
-      /* This should be set when created, not each time location requested */
-      if(i>=glFSLocationMap.length){
-        glFSLocationMap[i] = GL.getUniformLocation(glProgram, "fs"+i);
-      }
       return glFSLocationMap[i];
     }
 
     public inline function vaUniformLocationFromAgal(i:Int):Int{
-      /* This should be set when created, not each time location requested */
-      if(i>=glVALocationMap.length){
-        glVALocationMap[i] = GL.getAttribLocation(glProgram, "va"+i);
-      }
       return glVALocationMap[i];
     }
 }
