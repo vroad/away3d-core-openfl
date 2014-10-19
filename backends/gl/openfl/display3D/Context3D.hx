@@ -353,7 +353,7 @@ class Context3D
 
     public function setGLSLProgramConstantsFromMatrix(location : Location, matrix:Matrix3D, transposedMatrix:Bool = false):Void 
     {
-        GL.uniformMatrix3D(location, !transposedMatrix, matrix);
+        GL.uniformMatrix3fv(location, !transposedMatrix, new Float32Array(matrix.rawData));
     }
 
     public function setGLSLProgramConstantsFromVector4(location : Location, data:Vector<Float>, startIndex : Int = 0):Void 
