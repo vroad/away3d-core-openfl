@@ -8,6 +8,6 @@
 	"releasenote": "Initial alpha release",
 	"contributors": [ "Greg209" ],
 	"dependencies": {
-		"openfl": "2.0.1"
+		"openfl": 
 	}
 }
