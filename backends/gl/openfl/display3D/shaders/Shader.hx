@@ -6,6 +6,6 @@ package openfl.display3D.shaders;
 
 #if flash
 typedef Shader = flash.utils.ByteArray;
-#elseif (cpp || neko || js)
+#elseif (cpp || neko || js || node)
 typedef Shader = openfl.gl.GLShader;
 #end

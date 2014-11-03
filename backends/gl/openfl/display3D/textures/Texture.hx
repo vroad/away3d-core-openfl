@@ -32,7 +32,9 @@ class Texture extends TextureBase
         height = bitmapData.height;
         uploadFromUInt8Array(p.byteView, miplevel);
 #else
-        var p = BitmapData.getRGBAPixels(bitmapData);
+        // TODO:
+        //var p = BitmapData.getRGBAPixels(bitmapData);
+        var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
         var p2 = new ByteArray(p.length);
         var bytesPerLine:Int = bitmapData.width * 4;
         var srcPosition:Int = (bitmapData.height - 1) * bytesPerLine;

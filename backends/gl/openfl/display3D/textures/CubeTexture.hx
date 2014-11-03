@@ -34,13 +34,13 @@ class CubeTexture extends TextureBase
 
     public function uploadFromBitmapData( data:BitmapData, side:Int, miplevel:Int = 0 ):Void
     {
-        #if html5
+        #if js
             var p = data.getPixels(new openfl.geom.Rectangle(0, 0, data.width, data.height));
         #else
             var p = data.getRGBAPixels();
         #end
 		var source:UInt8Array = null;
-		#if html5
+		#if js
         source = new UInt8Array(p.length);
         p.position = 0;
         var i:Int = 0;

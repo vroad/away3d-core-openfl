@@ -32,7 +32,8 @@ class RectangleTexture extends TextureBase
         height = bitmapData.height;
         uploadFromUInt8Array(p.byteView);
 #else
-        var p = BitmapData.getRGBAPixels(bitmapData);
+        //var p = BitmapData.getRGBAPixels(bitmapData);
+        var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
         var p2 = new ByteArray(p.length);
         var bytesPerLine:Int = bitmapData.width * 4;
         var srcPosition:Int = (bitmapData.height - 1) * bytesPerLine;
@@ -49,7 +50,7 @@ class RectangleTexture extends TextureBase
     }
 
     private function uploadFromByteArray(data:ByteArray, byteArrayOffset:Int):Void {
-#if html5
+#if js
         var source = new UInt8Array(data.length);
         data.position = byteArrayOffset;
         var i:Int = 0;

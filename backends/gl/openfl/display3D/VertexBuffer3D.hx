@@ -31,7 +31,7 @@ class VertexBuffer3D
         var offset : Int = byteArrayOffset + startOffset * bytesPerVertex;
         var float32Array : Float32Array;
         
-        #if html5
+        #if js
         float32Array = new Float32Array(length);
         byteArray.position = offset;
         var i:Int = 0;
@@ -54,7 +54,7 @@ class VertexBuffer3D
         var offset : Int = startVertex;
         var float32Array : Float32Array;
         
-        #if html5
+        #if js
         float32Array = new Float32Array(length);
         for(i in startVertex...(startVertex+length)){
             float32Array[i] = data[i];
