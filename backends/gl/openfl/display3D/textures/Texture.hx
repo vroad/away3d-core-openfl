@@ -26,39 +26,27 @@ class Texture extends TextureBase
 	}
 
     public function uploadFromBitmapData (bitmapData:BitmapData, miplevel:Int = 0):Void {
-#if html5
-        var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
         width = bitmapData.width;
         height = bitmapData.height;
-        uploadFromUInt8Array(p.byteView, miplevel);
-#else
-        // TODO:
-        //var p = BitmapData.getRGBAPixels(bitmapData);
         var p = bitmapData.getPixels(new openfl.geom.Rectangle(0, 0, bitmapData.width, bitmapData.height));
+#if !html5
         var p2 = new ByteArray(p.length);
         var bytesPerLine:Int = bitmapData.width * 4;
-        var srcPosition:Int = (bitmapData.height - 1) * bytesPerLine;
-        var dstPosition:Int = 0;
+        var dstPosition:Int = (bitmapData.height - 1) * bytesPerLine;
         
         for(i in 0 ... bitmapData.height)
         {
-            p2.blit(dstPosition, p, srcPosition, bytesPerLine);
-            srcPosition -= bytesPerLine;
-            dstPosition += bytesPerLine;
+            p.readBytes(p2, dstPosition, bytesPerLine);
+            dstPosition -= bytesPerLine;
         }
-        uploadFromByteArray(p2, 0, miplevel);
+        p = p2;
 #end
+        uploadFromByteArray(p, 0, miplevel);
     }
 
     private function uploadFromByteArray(data:ByteArray, byteArrayOffset:Int, mipLevel:Int):Void {
-#if html5
-        var source = new UInt8Array(data.length);
-        data.position = byteArrayOffset;
-        var i:Int = 0;
-        while (data.position < data.length) {
-            source[i] = data.readUnsignedByte();
-            i++;
-        }
+#if js
+        var source = data.byteView;
 #else
         //TODO byteArrayOffset ?
         var source = new UInt8Array(data);
