@@ -52,6 +52,12 @@ class IndexBuffer3D
         #end
         GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices, GL.STATIC_DRAW);
     }
+    
+    public function uploadFromInt16Array(data:Int16Array):Void 
+    {
+        GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, glBuffer);
+        GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, data, GL.STATIC_DRAW);
+    }
 
     public function dispose():Void 
     {
