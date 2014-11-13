@@ -1,29 +1,31 @@
 package away3d.materials.passes; 
-	import away3d.utils.ArrayUtils;
-	import openfl.errors.ArgumentError;
-	import openfl.errors.Error;
-		import away3d.animators.data.AnimationRegisterCache;
-	import away3d.animators.IAnimationSet;
 
-	import away3d.cameras.Camera3D;
-	import away3d.core.base.IRenderable;
-	import away3d.core.managers.AGALProgram3DCache;
-	import away3d.core.managers.Stage3DProxy;
-	import away3d.debug.Debug;
-	import away3d.errors.AbstractMethodError;
-	import away3d.materials.MaterialBase;
-	import away3d.materials.lightpickers.LightPickerBase;
-	import openfl.display.BlendMode;
-	import openfl.display3D.Context3D;
-	import openfl.display3D.Context3DBlendFactor;
-	import openfl.display3D.Context3DCompareMode;
-	import openfl.display3D.Context3DTriangleFace;
-	import openfl.display3D.Program3D;
-	import openfl.display3D.textures.TextureBase;
-	import openfl.events.Event;
-	import openfl.events.EventDispatcher;
-	import openfl.geom.Matrix3D;
-	import openfl.geom.Rectangle;
+import away3d.utils.ArrayUtils;
+import openfl.errors.ArgumentError;
+import openfl.errors.Error;
+import away3d.animators.data.AnimationRegisterCache;
+import away3d.animators.IAnimationSet;
+import away3d.cameras.Camera3D;
+import away3d.core.base.IRenderable;
+import away3d.core.managers.AGALProgram3DCache;
+import away3d.core.managers.Stage3DProxy;
+import away3d.debug.Debug;
+import away3d.errors.AbstractMethodError;
+import away3d.materials.MaterialBase;
+import away3d.materials.lightpickers.LightPickerBase;
+import away3d.textures.Anisotropy;
+
+import openfl.display.BlendMode;
+import openfl.display3D.Context3D;
+import openfl.display3D.Context3DBlendFactor;
+import openfl.display3D.Context3DCompareMode;
+import openfl.display3D.Context3DTriangleFace;
+import openfl.display3D.Program3D;
+import openfl.display3D.textures.TextureBase;
+import openfl.events.Event;
+import openfl.events.EventDispatcher;
+import openfl.geom.Matrix3D;
+import openfl.geom.Rectangle;
 
 class MaterialPassBase extends EventDispatcher {
 	public var material(get_material, set_material):MaterialBase;
@@ -31,6 +33,7 @@ class MaterialPassBase extends EventDispatcher {
 	public var mipmap(get_mipmap, set_mipmap):Bool;
 	public var smooth(get_smooth, set_smooth):Bool;
 	public var repeat(get_repeat, set_repeat):Bool;
+	public var anisotropy(get_anisotropy, set_anisotropy):Anisotropy;
 	public var bothSides(get_bothSides, set_bothSides):Bool;
 	public var depthCompareMode(get_depthCompareMode, set_depthCompareMode):Context3DCompareMode;
 	public var animationSet(get_animationSet, set_animationSet):IAnimationSet;
@@ -60,6 +63,7 @@ class MaterialPassBase extends EventDispatcher {
 	private var _smooth:Bool;
 	private var _repeat:Bool;
 	private var _mipmap:Bool;
+	private var _anisotropy:Anisotropy;
 	private var _depthCompareMode:Context3DCompareMode;
 	private var _blendFactorSource:Context3DBlendFactor;
 	private var _blendFactorDest:Context3DBlendFactor;
@@ -105,6 +109,7 @@ class MaterialPassBase extends EventDispatcher {
 		_smooth = true;
 		_repeat = false;
 		_mipmap = true;
+		_anisotropy = Anisotropy.ANISOTROPIC2X;
 		_depthCompareMode = Context3DCompareMode.LESS_EQUAL;
 		
 		_blendFactorSource = Context3DBlendFactor.ONE;
@@ -168,6 +173,21 @@ class MaterialPassBase extends EventDispatcher {
 		return _mipmap;
 	}
 	
+    /**
+     * Indicates the number of Anisotropic filtering samples to take for mipmapping
+     */
+    public function get_anisotropy():Anisotropy {
+        return _anisotropy;
+    }
+
+    public function set_anisotropy(value:Anisotropy):Anisotropy {
+        if (_anisotropy == value)
+        	return _anisotropy;
+        _anisotropy = value;
+        invalidateShaderProgram();
+        return _anisotropy;
+    }
+
 	/**
 	 * Defines whether smoothing should be applied to any used textures.
 	 */ 

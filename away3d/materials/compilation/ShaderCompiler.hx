@@ -13,6 +13,7 @@ import away3d.materials.methods.MethodVO;
 import away3d.materials.methods.MethodVOSet;
 import away3d.materials.methods.ShaderMethodSetup;
 import away3d.materials.methods.ShadingMethodBase;
+import away3d.textures.Anisotropy;
 
 import openfl.Vector;
 
@@ -66,6 +67,7 @@ class ShaderCompiler {
     private var _smooth:Bool;
     private var _repeat:Bool;
     private var _mipmap:Bool;
+    private var _anisotropy:Anisotropy;
     private var _enableLightFallOff:Bool;
     private var _preserveAlpha:Bool;
     private var _animateUVs:Bool;
@@ -230,10 +232,11 @@ class ShaderCompiler {
 	 * @param repeat Indicates whether the texture should be tiled when sampled. Defaults to true.
 	 * @param mipmap Indicates whether or not any used textures should use mipmapping. Defaults to true.
 	 */
-    public function setTextureSampling(smooth:Bool, repeat:Bool, mipmap:Bool):Void {
+    public function setTextureSampling(smooth:Bool, repeat:Bool, mipmap:Bool, anisotropy:Anisotropy ):Void {
         _smooth = smooth;
         _repeat = repeat;
         _mipmap = mipmap;
+        _anisotropy = anisotropy;
     }
 
     /**
@@ -477,6 +480,7 @@ class ShaderCompiler {
         methodVO.useSmoothTextures = _smooth;
         methodVO.repeatTextures = _repeat;
         methodVO.useMipmapping = _mipmap;
+        methodVO.anisotropy = _anisotropy;
         methodVO.useLightFallOff = _enableLightFallOff && _profile != "baselineConstrained";
         methodVO.numLights = _numLights + _numLightProbes;
         method.initVO(methodVO);
