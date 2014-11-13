@@ -109,6 +109,7 @@ class Context3D
         }
 
         //GL.depthMask(true);
+        GL.colorMask(true, true, true, true);
         if (scissorRectangle != null)
             GL.disable(GL.SCISSOR_TEST);
         GL.clearColor(red, green, blue, alpha);
@@ -393,7 +394,6 @@ class Context3D
             rt = texture.renderTarget = new RenderTarget();
             rt.framebuffer = GL.createFramebuffer();
             rt.renderbuffer = GL.createRenderbuffer();
-            GL.colorMask(true, true, true, true);
         }
 
         GL.bindFramebuffer(GL.FRAMEBUFFER, rt.framebuffer);
