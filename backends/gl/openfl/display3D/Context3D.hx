@@ -386,6 +386,7 @@ class Context3D
             rt = texture.renderTarget = new RenderTarget();
             rt.framebuffer = GL.createFramebuffer();
             rt.renderbuffer = GL.createRenderbuffer();
+            GL.colorMask(true, true, true, true);
         }
 
         GL.bindFramebuffer(GL.FRAMEBUFFER, rt.framebuffer);
