@@ -12,9 +12,9 @@ class AGLSLContext3D extends Context3D
 {
 	private var _yFlip:Float;
 
-	public function new (oglView:OpenGLView)
+	public function new ()
 	{
-		super(oglView);
+		super();
 		_yFlip = -1;
 	}
 

@@ -29,7 +29,6 @@ class Context3D
     public var enableErrorChecking:Bool; // TODO   ( use GL.getError() and GL.validateProgram(program) )
 
     private var currentProgram : Program3D;
-    private var ogl:OpenGLView;
 
     // to mimic Stage3d behavior of keeping blending across frames:
     private var blendDestinationFactor:Int;
@@ -54,8 +53,9 @@ class Context3D
     private var texturesCreated : Array<TextureBase>;
 
     private var samplerParameters :Array<SamplerState>; //TODO : use Tupple3
-    private var scrollRect:Rectangle;
     private var scissorRectangle:Rectangle;
+    private var width:Int;
+    private var height:Int;
     private var rttWidth:Int;
     private var rttHeight:Int;
     private static var anisotropySupportTested:Bool = false;
@@ -64,7 +64,7 @@ class Context3D
 
     public static var MAX_SAMPLERS:Int = 8;
    
-    public function new(oglView:OpenGLView) 
+    public function new() 
     {
         #if html5
         GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, 1);
@@ -84,20 +84,9 @@ class Context3D
             this.samplerParameters[ i ].mipfilter =Context3DMipFilter.MIPNONE;
         }
 
-        var stage = Lib.current.stage;
-
-        ogl = oglView;
-        ogl.scrollRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-        scrollRect = ogl.scrollRect.clone();
-        ogl.width = stage.stageWidth;
-        ogl.height = stage.stageHeight;
-        
-        //todo html something 
-        //#if html5
-        //stage.addChild(ogl);
-        //#else
-        stage.addChildAt(ogl, 0);
-        //#end      
+        var stage = Lib.current.stage;    
+        width = Std.int(stage.width);
+        height = Std.int(stage.height);
     }
 
     public function clear(red:Float = 0, green:Float = 0, blue:Float = 0, alpha:Float = 1, depth:Float = 1, stencil:Int = 0, mask:Int = Context3DClearMask.ALL):Void 
@@ -109,7 +98,7 @@ class Context3D
         }
 
         //GL.depthMask(true);
-        GL.colorMask(true, true, true, true);
+        //GL.colorMask(true, true, true, true);
         if (scissorRectangle != null)
             GL.disable(GL.SCISSOR_TEST);
         GL.clearColor(red, green, blue, alpha);
@@ -132,9 +121,9 @@ class Context3D
         }
 
         // TODO use antiAlias parameter
-        ogl.scrollRect = new Rectangle(0, 0, width, height);
-        scrollRect = ogl.scrollRect.clone();
-        GL.viewport(Std.int(scrollRect.x),Std.int(scrollRect.y),Std.int(scrollRect.width),Std.int(scrollRect.height));
+        GL.viewport(0, 0, width, height);
+        this.width = width;
+        this.height = height;
         #if ios
         //defaultFrameBuffer = new GLFramebuffer(GL.version, 1); //TODO: GL.getParameter(GL.FRAMEBUFFER_BINDING));
         #end
@@ -369,19 +358,9 @@ class Context3D
         GL.uniform4f(location, data[startIndex],data[startIndex+1],data[startIndex+2],data[startIndex+3]);
     }
 
-    // TODO: Conform to API?
-    public function setRenderMethod(func:openfl.events.Event -> Void):Void
-    {
-        ogl.render = function(rect : Rectangle) func(null);
-    }
-
-    public function removeRenderMethod(func:openfl.events.Event -> Void):Void{
-        ogl.render = null;
-    }
-
     public function setRenderToBackBuffer ():Void {
         GL.bindFramebuffer(GL.FRAMEBUFFER, null );
-        GL.viewport(Std.int(scrollRect.x),Std.int(scrollRect.y),Std.int(scrollRect.width),Std.int(scrollRect.height));
+        GL.viewport(0, 0, width, height);
         renderToTexture = false;
         updateScissorRectangle();
     }
@@ -608,7 +587,7 @@ class Context3D
             return;
         
         //var width:Int = renderToTexture ? rttWidth : scrollRect.width;
-        var height:Float = renderToTexture ? rttHeight : scrollRect.height;
+        var height:Float = renderToTexture ? rttHeight : height;
         GL.scissor(Std.int(scissorRectangle.x),
             Std.int(height - scissorRectangle.y - scissorRectangle.height),
             Std.int(scissorRectangle.width),
