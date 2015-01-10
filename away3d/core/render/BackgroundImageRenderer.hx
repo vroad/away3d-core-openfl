@@ -1,6 +1,6 @@
 package away3d.core.render;
 
-import openfl.display3D.shaders.AGLSLShaderUtils;
+import openfl.display3D._shaders.AGLSLShaderUtils;
 import openfl.Vector;
 import away3d.core.managers.Stage3DProxy;
 import away3d.textures.Texture2DBase;

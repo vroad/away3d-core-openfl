@@ -15,7 +15,7 @@ import away3d.tools.utils.GeomUtil;
 import away3d.core.base.ISubGeometry;
 import away3d.core.base.SubMesh;
 import openfl.display3D.Context3DClearMask;
-import openfl.display3D.shaders.AGLSLShaderUtils;
+import openfl.display3D._shaders.AGLSLShaderUtils;
 import openfl.display3D.Context3DTriangleFace;
 import away3d.core.data.RenderableListItem;
 import openfl.geom.Matrix3D;
