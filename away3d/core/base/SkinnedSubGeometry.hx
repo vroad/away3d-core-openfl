@@ -15,11 +15,11 @@ import haxe.ds.IntMap;
 import openfl.Vector;
 
 class SkinnedSubGeometry extends CompactSubGeometry {
-    public var condensedIndexLookUp(get_condensedIndexLookUp, never):Vector<UInt>;
-    public var numCondensedJoints(get_numCondensedJoints, never):Int;
-    public var animatedData(get_animatedData, never):Vector<Float>;
-    public var jointWeightsData(get_jointWeightsData, never):Vector<Float>;
-    public var jointIndexData(get_jointIndexData, never):Vector<UInt>;
+    public var condensedIndexLookUp(get, never):Vector<UInt>;
+    public var numCondensedJoints(get, never):Int;
+    public var animatedData(get, never):Vector<Float>;
+    public var jointWeightsData(get, never):Vector<Float>;
+    public var jointIndexData(get, never):Vector<UInt>;
 
     private var _bufferFormat:Context3DVertexBufferFormat;
     private var _jointWeightsData:Vector<Float>;
@@ -53,7 +53,7 @@ class SkinnedSubGeometry extends CompactSubGeometry {
         _jointIndexContext = ArrayUtils.Prefill( new Vector<Context3D>(), 8);
 
         super();
-        
+
         _jointsPerVertex = jointsPerVertex;
         _bufferFormat = getVertexBufferFormat(_jointsPerVertex);
     }
@@ -77,21 +77,21 @@ class SkinnedSubGeometry extends CompactSubGeometry {
     /**
 	 * If indices have been condensed, this will contain the original index for each condensed index.
 	 */
-    public function get_condensedIndexLookUp():Vector<UInt> {
+    private function get_condensedIndexLookUp():Vector<UInt> {
         return _condensedIndexLookUp;
     }
 
     /**
 	 * The amount of joints used when joint indices have been condensed.
 	 */
-    public function get_numCondensedJoints():Int {
+    private function get_numCondensedJoints():Int {
         return _numCondensedJoints;
     }
 
     /**
 	 * The animated vertex positions when set explicitly if the skinning transformations couldn't be performed on GPU.
 	 */
-    public function get_animatedData():Vector<Float> {
+    private function get_animatedData():Vector<Float> {
         if (_animatedData != null) return _animatedData ;
         return _vertexData.copy();
     }
@@ -107,10 +107,10 @@ class SkinnedSubGeometry extends CompactSubGeometry {
 	 * @param stage3DProxy The Stage3DProxy to assign the stream to
 	 */
     public function activateJointWeightsBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_jointWeightContext[contextIndex] != context || _jointWeightsBuffer[contextIndex] == null) {
-            _jointWeightsBuffer[contextIndex] = context.createVertexBuffer(_numVertices, _jointsPerVertex);
+            _jointWeightsBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, _jointsPerVertex);
             _jointWeightContext[contextIndex] = context;
             _jointWeightsInvalid[contextIndex] = true;
         }
@@ -127,10 +127,10 @@ class SkinnedSubGeometry extends CompactSubGeometry {
 	 * @param stage3DProxy The Stage3DProxy to assign the stream to
 	 */
     public function activateJointIndexBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_jointIndexContext[contextIndex] != context || _jointIndexBuffer[contextIndex] == null) {
-            _jointIndexBuffer[contextIndex] = context.createVertexBuffer(_numVertices, _jointsPerVertex);
+            _jointIndexBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, _jointsPerVertex);
             _jointIndexContext[contextIndex] = context;
             _jointIndicesInvalid[contextIndex] = true;
         }
@@ -189,7 +189,7 @@ class SkinnedSubGeometry extends CompactSubGeometry {
         var i:Int = 0;
         while (i < len) {
             oldIndex = _jointIndexData[i];
-            
+
             // if we encounter a new index, assign it a new condensed index
             if (!dic.exists(oldIndex)) {
                 dic.set(oldIndex, newIndex);
@@ -232,4 +232,3 @@ class SkinnedSubGeometry extends CompactSubGeometry {
         invalidateBuffers(_jointIndicesInvalid);
     }
 }
-

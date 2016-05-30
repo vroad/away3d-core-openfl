@@ -15,6 +15,7 @@ import away3d.materials.TextureMaterial;
 import away3d.core.base.SubMesh;
 import away3d.animators.states.IUVAnimationState;
 import away3d.animators.data.UVAnimationFrame;
+import openfl.Vector;
 
 import away3d.cameras.Camera3D;
 
@@ -23,10 +24,10 @@ import openfl.geom.Matrix;
 
 
 class UVAnimator extends AnimatorBase implements IAnimator {
-    public var autoRotation(get_autoRotation, set_autoRotation):Bool;
-    public var rotationIncrease(get_rotationIncrease, set_rotationIncrease):Float;
-    public var autoTranslate(get_autoTranslate, set_autoTranslate):Bool;
-    public var translateIncrease(get_translateIncrease, never):Vector<Float>;
+    public var autoRotation(get, set):Bool;
+    public var rotationIncrease(get, set):Float;
+    public var autoTranslate(get, set):Bool;
+    public var translateIncrease(get, never):Vector<Float>;
 
     private var _uvAnimationSet:UVAnimationSet;
     private var _deltaFrame:UVAnimationFrame;
@@ -49,45 +50,45 @@ class UVAnimator extends AnimatorBase implements IAnimator {
         _rotationIncrease = 1;
         super(uvAnimationSet);
         _uvTransform = new Matrix();
-        _matrix2d = [1, 0, 0, 0, 1, 0, 0, 0];
-        _translate = [0, 0, 0.5, 0.5];
+        _matrix2d = Vector.ofArray([1, 0, 0, 0, 1, 0, 0, 0]);
+        _translate = Vector.ofArray([0, 0, 0.5, 0.5]);
         _uvAnimationSet = uvAnimationSet;
     }
 
     /**
 	 * Defines if a rotation is performed automatically each update. The rotationIncrease value is added each iteration.
 	 */
-    public function set_autoRotation(b:Bool):Bool {
+    private function set_autoRotation(b:Bool):Bool {
         _autoRotation = b;
         return b;
     }
 
-    public function get_autoRotation():Bool {
+    private function get_autoRotation():Bool {
         return _autoRotation;
     }
 
     /**
 	 * if autoRotation = true, the rotation is increased by the rotationIncrease value. Default is 1;
 	 */
-    public function set_rotationIncrease(value:Float):Float {
+    private function set_rotationIncrease(value:Float):Float {
         _rotationIncrease = value;
         return value;
     }
 
-    public function get_rotationIncrease():Float {
+    private function get_rotationIncrease():Float {
         return _rotationIncrease;
     }
 
     /**
 	 * Defines if the animation is translated automatically each update. Ideal to scroll maps. Use setTranslateIncrease to define the offsets.
 	 */
-    public function set_autoTranslate(b:Bool):Bool {
+    private function set_autoTranslate(b:Bool):Bool {
         _autoTranslate = b;
         if (b && _translateIncrease == null) _translateIncrease = Vector.ofArray(cast [0, 0]);
         return b;
     }
 
-    public function get_autoTranslate():Bool {
+    private function get_autoTranslate():Bool {
         return _autoTranslate;
     }
 
@@ -101,7 +102,7 @@ class UVAnimator extends AnimatorBase implements IAnimator {
         _translateIncrease[1] = v;
     }
 
-    public function get_translateIncrease():Vector<Float> {
+    private function get_translateIncrease():Vector<Float> {
         return _translateIncrease;
     }
 
@@ -118,7 +119,7 @@ class UVAnimator extends AnimatorBase implements IAnimator {
         }
         _translate[0] = _deltaFrame.offsetU;
         _translate[1] = _deltaFrame.offsetV;
-        stage3DProxy._context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _translate);
+        stage3DProxy.context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _translate);
         _uvTransform.identity();
         if (_autoRotation) _deltaFrame.rotation += _rotationIncrease;
         if (_deltaFrame.rotation != 0) _uvTransform.rotate(_deltaFrame.rotation * MathConsts.DEGREES_TO_RADIANS);
@@ -129,7 +130,7 @@ class UVAnimator extends AnimatorBase implements IAnimator {
         _matrix2d[4] = _uvTransform.c;
         _matrix2d[5] = _uvTransform.d;
         _matrix2d[7] = _uvTransform.ty;
-        stage3DProxy._context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset + 4, _matrix2d);
+        stage3DProxy.context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset + 4, _matrix2d);
     }
 
     /**

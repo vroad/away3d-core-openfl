@@ -12,9 +12,9 @@ import openfl.display3D.VertexBuffer3D;
 import openfl.Vector;
 
 class AnimationSubGeometry {
-    public var vertexData(get_vertexData, never):Vector<Float>;
-    public var numVertices(get_numVertices, never):Int;
-    public var totalLenOfOneVertex(get_totalLenOfOneVertex, never):Int;
+    public var vertexData(get, never):Vector<Float>;
+    public var numVertices(get, never):Int;
+    public var totalLenOfOneVertex(get, never):Int;
 
     private var _vertexData:Vector<Float>;
     private var _vertexBuffer:Vector<VertexBuffer3D>;
@@ -51,7 +51,7 @@ class AnimationSubGeometry {
         var context:Context3D = stage3DProxy.context3D;
         var buffer:VertexBuffer3D = _vertexBuffer[contextIndex];
         if (buffer == null || _bufferContext[contextIndex] != context) {
-            buffer = _vertexBuffer[contextIndex] = context.createVertexBuffer(_numVertices, _totalLenOfOneVertex);
+            buffer = _vertexBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, _totalLenOfOneVertex);
             _bufferContext[contextIndex] = context;
             _bufferDirty[contextIndex] = true;
         }
@@ -65,7 +65,7 @@ class AnimationSubGeometry {
     public function dispose():Void {
         while (_vertexBuffer.length > 0) {
             var vertexBuffer:VertexBuffer3D = _vertexBuffer.pop();
-            if (vertexBuffer != null) vertexBuffer.dispose();
+            if (vertexBuffer != null) Stage3DProxy.disposeVertexBuffer(vertexBuffer);
         }
 
     }
@@ -78,16 +78,15 @@ class AnimationSubGeometry {
         }
     }
 
-    public function get_vertexData():Vector<Float> {
+    private function get_vertexData():Vector<Float> {
         return _vertexData;
     }
 
-    public function get_numVertices():Int {
+    private function get_numVertices():Int {
         return _numVertices;
     }
 
-    public function get_totalLenOfOneVertex():Int {
+    private function get_totalLenOfOneVertex():Int {
         return _totalLenOfOneVertex;
     }
 }
-

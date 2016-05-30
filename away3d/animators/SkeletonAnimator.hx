@@ -30,11 +30,11 @@ import away3d.core.base.CompactSubGeometry;
 import openfl.Vector;
 
 class SkeletonAnimator extends AnimatorBase implements IAnimator {
-    public var globalMatrices(get_globalMatrices, never):Vector<Float>;
-    public var globalPose(get_globalPose, never):SkeletonPose;
-    public var skeleton(get_skeleton, never):Skeleton;
-    public var forceCPU(get_forceCPU, never):Bool;
-    public var useCondensedIndices(get_useCondensedIndices, set_useCondensedIndices):Bool;
+    public var globalMatrices(get, never):Vector<Float>;
+    public var globalPose(get, never):SkeletonPose;
+    public var skeleton(get, never):Skeleton;
+    public var forceCPU(get, never):Bool;
+    public var useCondensedIndices(get, set):Bool;
 
     private var _globalMatrices:Vector<Float>;
     private var _globalPose:SkeletonPose;
@@ -53,7 +53,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
 	 *
 	 * @see #globalPose
 	 */
-    public function get_globalMatrices():Vector<Float> {
+    private function get_globalMatrices():Vector<Float> {
         if (_globalPropertiesDirty) updateGlobalProperties();
         return _globalMatrices;
     }
@@ -63,7 +63,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
 	 *
 	 * @see away3d.animators.data.SkeletonPose
 	 */
-    public function get_globalPose():SkeletonPose {
+    private function get_globalPose():SkeletonPose {
         if (_globalPropertiesDirty) updateGlobalProperties();
         return _globalPose;
     }
@@ -72,7 +72,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
 	 * Returns the skeleton object in use by the animator - this defines the number and heirarchy of joints used by the
 	 * skinned geoemtry to which skeleon animator is applied.
 	 */
-    public function get_skeleton():Skeleton {
+    private function get_skeleton():Skeleton {
         return _skeleton;
     }
 
@@ -80,7 +80,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
 	 * Indicates whether the skeleton animator is disabled by default for GPU rendering, something that allows the animator to perform calculation on the GPU.
 	 * Defaults to false.
 	 */
-    public function get_forceCPU():Bool {
+    private function get_forceCPU():Bool {
         return _forceCPU;
     }
 
@@ -89,11 +89,11 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
 	 * by condensing the number of joint index values required per mesh. Only applicable to
 	 * skeleton animations that utilise more than one mesh object. Defaults to false.
 	 */
-    public function get_useCondensedIndices():Bool {
+    private function get_useCondensedIndices():Bool {
         return _useCondensedIndices;
     }
 
-    public function set_useCondensedIndices(value:Bool):Bool {
+    private function set_useCondensedIndices(value:Bool):Bool {
         _useCondensedIndices = value;
         return value;
     }
@@ -196,7 +196,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
                 numCondensedJoints = skinnedGeom.numCondensedJoints;
             }
             updateCondensedMatrices(skinnedGeom.condensedIndexLookUp, numCondensedJoints);
-            stage3DProxy._context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _condensedMatrices, numCondensedJoints * 3);
+            stage3DProxy.context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _condensedMatrices, numCondensedJoints * 3);
         } else {
             if (_animationSet.usesCPU) {
                 if (!_skeletonAnimationStates.exists(skinnedGeom))
@@ -209,7 +209,7 @@ class SkeletonAnimator extends AnimatorBase implements IAnimator {
                 skinnedGeom.updateAnimatedData(subGeomAnimState.animatedVertexData);
                 return;
             }
-            stage3DProxy._context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _globalMatrices, _numJoints * 3);
+            stage3DProxy.context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _globalMatrices, _numJoints * 3);
         }
 
         skinnedGeom.activateJointIndexBuffer(vertexStreamOffset, stage3DProxy);

@@ -19,15 +19,16 @@ import away3d.animators.data.SpriteSheetAnimationFrame;
 import away3d.animators.states.ISpriteSheetAnimationState;
 import away3d.animators.states.SpriteSheetAnimationState;
 import away3d.animators.transitions.IAnimationTransition;
+import openfl.Vector;
 
 import away3d.cameras.Camera3D;
 import openfl.display3D.Context3DProgramType;
 class SpriteSheetAnimator extends AnimatorBase implements IAnimator {
-    public var fps(get_fps, set_fps):Int;
-    public var reverse(get_reverse, set_reverse):Bool;
-    public var backAndForth(get_backAndForth, set_backAndForth):Bool;
-    public var currentFrameNumber(get_currentFrameNumber, never):Int;
-    public var totalFrames(get_totalFrames, never):Int;
+    public var fps(get, set):Int;
+    public var reverse(get, set):Bool;
+    public var backAndForth(get, set):Bool;
+    public var currentFrameNumber(get, never):Int;
+    public var totalFrames(get, never):Int;
 
     private var _activeSpriteSheetState:ISpriteSheetAnimationState;
     private var _spriteSheetAnimationSet:SpriteSheetAnimationSet;
@@ -55,37 +56,37 @@ class SpriteSheetAnimator extends AnimatorBase implements IAnimator {
 
 /* Set the playrate of the animation in frames per second (not depending on player fps)*/
 
-    public function set_fps(val:Int):Int {
+    private function set_fps(val:Int):Int {
         _ms = Std.int(1000 / val);
         _fps = val;
         return val;
     }
 
-    public function get_fps():Int {
+    private function get_fps():Int {
         return _fps;
     }
 
 /* If true, reverse causes the animation to play backwards*/
 
-    public function set_reverse(b:Bool):Bool {
+    private function set_reverse(b:Bool):Bool {
         _reverse = b;
         _specsDirty = true;
         return b;
     }
 
-    public function get_reverse():Bool {
+    private function get_reverse():Bool {
         return _reverse;
     }
 
 /* If true, backAndForth causes the animation to play backwards and forward alternatively. Starting forward.*/
 
-    public function set_backAndForth(b:Bool):Bool {
+    private function set_backAndForth(b:Bool):Bool {
         _backAndForth = b;
         _specsDirty = true;
         return b;
     }
 
-    public function get_backAndForth():Bool {
+    private function get_backAndForth():Bool {
         return _backAndForth;
     }
 
@@ -103,13 +104,13 @@ class SpriteSheetAnimator extends AnimatorBase implements IAnimator {
 
 /* returns the current frame*/
 
-    public function get_currentFrameNumber():Int {
+    private function get_currentFrameNumber():Int {
         return cast((_activeState), SpriteSheetAnimationState).currentFrameNumber;
     }
 
 /* returns the total amount of frame for the current animation*/
 
-    public function get_totalFrames():Int {
+    private function get_totalFrames():Int {
         return cast((_activeState), SpriteSheetAnimationState).totalFrames;
     }
 
@@ -129,7 +130,7 @@ class SpriteSheetAnimator extends AnimatorBase implements IAnimator {
             _vectorFrame[2] = _frame.scaleU;
             _vectorFrame[3] = _frame.scaleV;
         }
-        stage3DProxy._context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _vectorFrame);
+        stage3DProxy.context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX, vertexConstantOffset, _vectorFrame);
     }
 
     /**

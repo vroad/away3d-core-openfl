@@ -9,7 +9,7 @@ import openfl.geom.Vector3D;
 import openfl.Vector;
 
 class Quaternion {
-    public var magnitude(get_magnitude, never):Float;
+    public var magnitude(get, never):Float;
 
     /**
 	 * The x value of the quaternion.
@@ -39,10 +39,6 @@ class Quaternion {
 	 * @param w The w value of the quaternion.
 	 */
     public function new(x:Float = 0, y:Float = 0, z:Float = 0, w:Float = 1) {
-        x = 0;
-        y = 0;
-        z = 0;
-        w = 1;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -52,7 +48,7 @@ class Quaternion {
     /**
 	 * Returns the magnitude of the quaternion object.
 	 */
-    public function get_magnitude():Float {
+    private function get_magnitude():Float {
         return Math.sqrt(w * w + x * x + y * y + z * z);
     }
 

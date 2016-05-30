@@ -8,10 +8,10 @@ import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
 
 class StereoCamera3D extends Camera3D {
-    public var leftCamera(get_leftCamera, never):Camera3D;
-    public var rightCamera(get_rightCamera, never):Camera3D;
-    public var stereoFocus(get_stereoFocus, set_stereoFocus):Float;
-    public var stereoOffset(get_stereoOffset, set_stereoOffset):Float;
+    public var leftCamera(get, never):Camera3D;
+    public var rightCamera(get, never):Camera3D;
+    public var stereoFocus(get, set):Float;
+    public var stereoOffset(get, set):Float;
 
     private var _leftCam:Camera3D;
     private var _rightCam:Camera3D;
@@ -27,7 +27,9 @@ class StereoCamera3D extends Camera3D {
         _leftCamDirty = true;
         _rightCamDirty = true;
         _focusPointDirty = true;
+        
         super(lens);
+        
         _leftCam = new Camera3D(lens);
         _rightCam = new Camera3D(lens);
         _offset = 0;
@@ -35,63 +37,78 @@ class StereoCamera3D extends Camera3D {
         _focusPoint = new Vector3D();
     }
 
-    override public function set_lens(value:LensBase):LensBase {
+    override private function set_lens(value:LensBase):LensBase {
         _leftCam.lens = value;
         _rightCam.lens = value;
+        
         super.lens = value;
+        
         return value;
     }
 
-    public function get_leftCamera():Camera3D {
+    private function get_leftCamera():Camera3D {
         if (_leftCamDirty) {
             var tf:Matrix3D;
-            if (_focusPointDirty) updateFocusPoint();
+            
+            if (_focusPointDirty)
+                updateFocusPoint();
+            
             tf = _leftCam.transform;
             tf.copyFrom(transform);
             tf.prependTranslation(-_offset, 0, 0);
             _leftCam.transform = tf;
-            if (!_focusInfinity) _leftCam.lookAt(_focusPoint);
+            
+            if (!_focusInfinity) 
+                _leftCam.lookAt(_focusPoint);
+            
             _leftCamDirty = false;
         }
         return _leftCam;
     }
 
-    public function get_rightCamera():Camera3D {
+    private function get_rightCamera():Camera3D {
         if (_rightCamDirty) {
             var tf:Matrix3D;
-            if (_focusPointDirty) updateFocusPoint();
+            
+            if (_focusPointDirty)
+                updateFocusPoint();
+            
             tf = _rightCam.transform;
             tf.copyFrom(transform);
             tf.prependTranslation(_offset, 0, 0);
             _rightCam.transform = tf;
-            if (!_focusInfinity) _rightCam.lookAt(_focusPoint);
+            
+            if (!_focusInfinity) 
+                _rightCam.lookAt(_focusPoint);
+            
             _rightCamDirty = false;
         }
         return _rightCam;
     }
 
-    public function get_stereoFocus():Float {
+    private function get_stereoFocus():Float {
         return _focus;
     }
 
-    public function set_stereoFocus(value:Float):Float {
+    private function set_stereoFocus(value:Float):Float {
         _focus = value;
         invalidateStereoCams();
         return value;
     }
 
-    public function get_stereoOffset():Float {
+    private function get_stereoOffset():Float {
         return _offset;
     }
 
-    public function set_stereoOffset(value:Float):Float {
+    private function set_stereoOffset(value:Float):Float {
         _offset = value;
         invalidateStereoCams();
         return value;
     }
 
     private function updateFocusPoint():Void {
-        if (_focus == Math.POSITIVE_INFINITY) _focusInfinity = true
+        if (_focus == Math.POSITIVE_INFINITY) 
+            _focusInfinity = true
         else {
             _focusPoint.x = 0;
             _focusPoint.y = 0;
@@ -105,6 +122,7 @@ class StereoCamera3D extends Camera3D {
 
     override private function invalidateTransform():Void {
         super.invalidateTransform();
+        
         invalidateStereoCams();
     }
 

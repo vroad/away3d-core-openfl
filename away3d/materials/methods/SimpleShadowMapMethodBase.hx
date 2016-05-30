@@ -18,7 +18,7 @@ import away3d.lights.LightBase;
 import openfl.Vector;
 
 class SimpleShadowMapMethodBase extends ShadowMapMethodBase {
-    var depthMapCoordReg(get_depthMapCoordReg, set_depthMapCoordReg):ShaderRegisterElement;
+    var depthMapCoordReg(get, set):ShaderRegisterElement;
 
     private var _depthMapCoordReg:ShaderRegisterElement;
     private var _usePoint:Bool;
@@ -208,7 +208,7 @@ class SimpleShadowMapMethodBase extends ShadowMapMethodBase {
             var f:Float = cast((_castingLight), PointLight)._fallOff;
             fragmentData[index + 11] = 1 / (2 * f * f);
         }
-        stage3DProxy._context3D.setTextureAt(vo.texturesIndex, _castingLight.shadowMapper.depthMap.getTextureForStage3D(stage3DProxy));
+        stage3DProxy.context3D.setTextureAt(vo.texturesIndex, _castingLight.shadowMapper.depthMap.getTextureForStage3D(stage3DProxy));
     }
 
     /**

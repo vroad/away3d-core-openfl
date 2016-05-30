@@ -8,9 +8,10 @@ import openfl.geom.Vector3D;
 import away3d.animators.data.Skeleton;
 import away3d.animators.nodes.SkeletonDirectionalNode;
 import away3d.animators.data.SkeletonPose;
+import openfl.Vector;
 
 class SkeletonDirectionalState extends AnimationStateBase implements ISkeletonAnimationState {
-    public var direction(get_direction, set_direction):Float;
+    public var direction(get, set):Float;
 
     private var _skeletonAnimationNode:SkeletonDirectionalNode;
     private var _skeletonPose:SkeletonPose;
@@ -28,7 +29,7 @@ class SkeletonDirectionalState extends AnimationStateBase implements ISkeletonAn
 	 * Defines the direction in degrees of the aniamtion between the forwards (0), right(90) backwards (180) and left(270) input nodes,
 	 * used to produce the skeleton pose output.
 	 */
-    public function set_direction(value:Float):Float {
+    private function set_direction(value:Float):Float {
         if (_direction == value) return value;
         _direction = value;
         _blendDirty = true;
@@ -37,7 +38,7 @@ class SkeletonDirectionalState extends AnimationStateBase implements ISkeletonAn
         return value;
     }
 
-    public function get_direction():Float {
+    private function get_direction():Float {
         return _direction;
     }
 

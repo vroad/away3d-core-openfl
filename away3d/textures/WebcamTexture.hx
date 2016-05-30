@@ -4,13 +4,17 @@ import away3d.tools.utils.TextureUtils;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.TextureBase;
 import openfl.geom.Matrix;
+#if !js
 import openfl.media.Camera;
+#end
 import openfl.media.Video;
 
-class WebcamTexture extends BitmapTexture {
-    public var autoUpdate(get_autoUpdate, set_autoUpdate):Bool;
-    public var camera(get_camera, never):Camera;
-    public var smoothing(get_smoothing, set_smoothing):Bool;
+class WebcamTexture extends BitmapTexture
+{	
+	#if !js
+    public var autoUpdate(get, set):Bool;
+    public var camera(get, never):Camera;
+    public var smoothing(get, set):Bool;
 
     private var _materialSize:Int;
     private var _video:Video;
@@ -41,11 +45,11 @@ class WebcamTexture extends BitmapTexture {
 	 * Defines whether the texture should automatically update while camera stream is
 	 * playing. If false, the update() method must be invoked for the texture to redraw.
 	 */
-    public function get_autoUpdate():Bool {
+    private function get_autoUpdate():Bool {
         return _autoUpdate;
     }
 
-    public function set_autoUpdate(val:Bool):Bool {
+    private function set_autoUpdate(val:Bool):Bool {
         _autoUpdate = val;
         if (_autoUpdate && _playing) invalidateContent();
         return val;
@@ -54,7 +58,7 @@ class WebcamTexture extends BitmapTexture {
     /**
 	 * The Camera instance (webcam) used by this texture.
 	 */
-    public function get_camera():Camera {
+    private function get_camera():Camera {
         return _camera;
     }
 
@@ -62,11 +66,11 @@ class WebcamTexture extends BitmapTexture {
 	 * Toggles smoothing on the texture as it's drawn (and potentially scaled)
 	 * from the video stream to a BitmapData object.
 	 */
-    public function get_smoothing():Bool {
+    private function get_smoothing():Bool {
         return _smoothing;
     }
 
-    public function set_smoothing(value:Bool):Bool {
+    private function set_smoothing(value:Bool):Bool {
         _smoothing = value;
         return value;
     }
@@ -148,5 +152,7 @@ class WebcamTexture extends BitmapTexture {
         }
         return size;
     }
+	#end
+	
 }
 

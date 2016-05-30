@@ -4,7 +4,7 @@
 package away3d.animators.states;
 
 import openfl.errors.Error;
-import haxe.ds.WeakMap;
+import haxe.ds.ObjectMap;
 import away3d.animators.data.ParticlePropertiesMode;
 
 import away3d.cameras.Camera3D;
@@ -16,9 +16,10 @@ import away3d.animators.nodes.ParticleRotationalVelocityNode;
 import away3d.animators.ParticleAnimator;
 import openfl.display3D.Context3DVertexBufferFormat;
 import openfl.geom.Vector3D;
+import openfl.Vector;
 
 class ParticleRotationalVelocityState extends ParticleStateBase {
-    public var rotationalVelocity(get_rotationalVelocity, set_rotationalVelocity):Vector3D;
+    public var rotationalVelocity(get, set):Vector3D;
 
     private var _particleRotationalVelocityNode:ParticleRotationalVelocityNode;
     private var _rotationalVelocityData:Vector3D;
@@ -26,11 +27,11 @@ class ParticleRotationalVelocityState extends ParticleStateBase {
     /**
 	 * Defines the default rotationalVelocity of the state, used when in global mode.
 	 */
-    public function get_rotationalVelocity():Vector3D {
+    private function get_rotationalVelocity():Vector3D {
         return _rotationalVelocity;
     }
 
-    public function set_rotationalVelocity(value:Vector3D):Vector3D {
+    private function set_rotationalVelocity(value:Vector3D):Vector3D {
         _rotationalVelocity = value;
         updateRotationalVelocityData();
         return value;
@@ -45,13 +46,15 @@ class ParticleRotationalVelocityState extends ParticleStateBase {
 
     public function setRotationalVelocities(value:Vector<Vector3D>):Void {
         _dynamicProperties = value;
-        _dynamicPropertiesDirty = new WeakMap<AnimationSubGeometry, Bool>();
+        _dynamicPropertiesDirty = new ObjectMap<AnimationSubGeometry, Bool>();
     }
 
     public function new(animator:ParticleAnimator, particleRotationNode:ParticleRotationalVelocityNode) {
         super(animator, particleRotationNode);
+        
         _particleRotationalVelocityNode = particleRotationNode;
         _rotationalVelocity = _particleRotationalVelocityNode._rotationalVelocity;
+        
         updateRotationalVelocityData();
     }
 

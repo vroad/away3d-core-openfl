@@ -8,10 +8,10 @@ import away3d.filters.tasks.Filter3DVBlurTask;
 import openfl.display3D.textures.Texture;
 
 class BloomFilter3D extends Filter3DBase {
-    public var exposure(get_exposure, set_exposure):Float;
-    public var blurX(get_blurX, set_blurX):Int;
-    public var blurY(get_blurY, set_blurY):Int;
-    public var threshold(get_threshold, set_threshold):Float;
+    public var exposure(get, set):Float;
+    public var blurX(get, set):Int;
+    public var blurY(get, set):Int;
+    public var threshold(get, set):Float;
 
     private var _brightPassTask:Filter3DBrightPassTask;
     private var _vBlurTask:Filter3DVBlurTask;
@@ -20,15 +20,21 @@ class BloomFilter3D extends Filter3DBase {
 
     public function new(blurX:Int = 15, blurY:Int = 15, threshold:Float = .75, exposure:Float = 2, quality:Int = 3) {
         super();
+        
         _brightPassTask = new Filter3DBrightPassTask(threshold);
         _hBlurTask = new Filter3DHBlurTask(blurX);
         _vBlurTask = new Filter3DVBlurTask(blurY);
         _compositeTask = new Filter3DBloomCompositeTask(exposure);
-        if (quality > 4) quality = 4
-        else if (quality < 0) quality = 0;
+        
+        if (quality > 4) 
+            quality = 4
+        else if (quality < 0) 
+            quality = 0;
+        
         _hBlurTask.textureScale = (4 - quality);
         _vBlurTask.textureScale = (4 - quality);
-// composite's main input texture is from vBlur, so needs to be scaled down
+        
+        // composite's main input texture is from vBlur, so needs to be scaled down
         _compositeTask.textureScale = (4 - quality);
         addTask(_brightPassTask);
         addTask(_hBlurTask);
@@ -40,43 +46,45 @@ class BloomFilter3D extends Filter3DBase {
         _brightPassTask.target = _hBlurTask.getMainInputTexture(stage3DProxy);
         _hBlurTask.target = _vBlurTask.getMainInputTexture(stage3DProxy);
         _vBlurTask.target = _compositeTask.getMainInputTexture(stage3DProxy);
-// use bright pass's input as composite's input
+        
+        // use bright pass's input as composite's input
         _compositeTask.overlayTexture = _brightPassTask.getMainInputTexture(stage3DProxy);
+        
         super.setRenderTargets(mainTarget, stage3DProxy);
     }
 
-    public function get_exposure():Float {
+    private function get_exposure():Float {
         return _compositeTask.exposure;
     }
 
-    public function set_exposure(value:Float):Float {
+    private function set_exposure(value:Float):Float {
         _compositeTask.exposure = value;
         return value;
     }
 
-    public function get_blurX():Int {
+    private function get_blurX():Int {
         return _hBlurTask.amount;
     }
 
-    public function set_blurX(value:Int):Int {
+    private function set_blurX(value:Int):Int {
         _hBlurTask.amount = value;
         return value;
     }
 
-    public function get_blurY():Int {
+    private function get_blurY():Int {
         return _vBlurTask.amount;
     }
 
-    public function set_blurY(value:Int):Int {
+    private function set_blurY(value:Int):Int {
         _vBlurTask.amount = value;
         return value;
     }
 
-    public function get_threshold():Float {
+    private function get_threshold():Float {
         return _brightPassTask.threshold;
     }
 
-    public function set_threshold(value:Float):Float {
+    private function set_threshold(value:Float):Float {
         _brightPassTask.threshold = value;
         return value;
     }

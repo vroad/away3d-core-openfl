@@ -19,10 +19,10 @@ import openfl.geom.Matrix3D;
 import openfl.Vector;
 
 class SubGeometry extends SubGeometryBase implements ISubGeometry {
-    public var numVertices(get_numVertices, never):Int;
-    public var secondaryUVData(get_secondaryUVData, never):Vector<Float>;
-    public var secondaryUVStride(get_secondaryUVStride, never):Int;
-    public var secondaryUVOffset(get_secondaryUVOffset, never):Int;
+    public var numVertices(get, never):Int;
+    public var secondaryUVData(get, never):Vector<Float>;
+    public var secondaryUVStride(get, never):Int;
+    public var secondaryUVOffset(get, never):Int;
 
     // raw data:
     private var _uvs:Vector<Float>;
@@ -58,13 +58,13 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
         _secondaryUvsInvalid = ArrayUtils.Prefill( new Vector<Bool>(), 8);
         _normalsInvalid = ArrayUtils.Prefill( new Vector<Bool>(), 8);
         _tangentsInvalid = ArrayUtils.Prefill( new Vector<Bool>(), 8);
-        
+
         _vertexBuffer = new Vector<VertexBuffer3D>(8);
         _uvBuffer = new Vector<VertexBuffer3D>(8);
         _secondaryUvBuffer = new Vector<VertexBuffer3D>(8);
         _vertexNormalBuffer = new Vector<VertexBuffer3D>(8);
         _vertexTangentBuffer = new Vector<VertexBuffer3D>(8);
-        
+
         _vertexBufferContext = new Vector<Context3D>(8);
         _uvBufferContext = new Vector<Context3D>(8);
         _secondaryUvBufferContext = new Vector<Context3D>(8);
@@ -75,7 +75,7 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     /**
 	 * The total amount of vertices in the SubGeometry.
 	 */
-    public function get_numVertices():Int {
+    private function get_numVertices():Int {
         return _numVertices;
     }
 
@@ -83,10 +83,10 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 * @inheritDoc
 	 */
     public function activateVertexBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_vertexBuffer[contextIndex] == null || _vertexBufferContext[contextIndex] != context) {
-            _vertexBuffer[contextIndex] = context.createVertexBuffer(_numVertices, 3);
+            _vertexBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, 3);
             _vertexBufferContext[contextIndex] = context;
             _verticesInvalid[contextIndex] = true;
         }
@@ -101,11 +101,11 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 * @inheritDoc
 	 */
     public function activateUVBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_autoGenerateUVs && _uvsDirty) _uvs = updateDummyUVs(_uvs);
         if (_uvBuffer[contextIndex] == null || _uvBufferContext[contextIndex] != context) {
-            _uvBuffer[contextIndex] = context.createVertexBuffer(_numVertices, 2);
+            _uvBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, 2);
             _uvBufferContext[contextIndex] = context;
             _uvsInvalid[contextIndex] = true;
         }
@@ -120,10 +120,10 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 * @inheritDoc
 	 */
     public function activateSecondaryUVBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_secondaryUvBuffer[contextIndex] == null || _secondaryUvBufferContext[contextIndex] != context) {
-            _secondaryUvBuffer[contextIndex] = context.createVertexBuffer(_numVertices, 2);
+            _secondaryUvBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, 2);
             _secondaryUvBufferContext[contextIndex] = context;
             _secondaryUvsInvalid[contextIndex] = true;
         }
@@ -140,11 +140,11 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 * @return The VertexBuffer3D object that contains vertex normals.
 	 */
     public function activateVertexNormalBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_autoDeriveVertexNormals && _vertexNormalsDirty) _vertexNormals = updateVertexNormals(_vertexNormals);
         if (_vertexNormalBuffer[contextIndex] == null || _vertexNormalBufferContext[contextIndex] != context) {
-            _vertexNormalBuffer[contextIndex] = context.createVertexBuffer(_numVertices, 3);
+            _vertexNormalBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, 3);
             _vertexNormalBufferContext[contextIndex] = context;
             _normalsInvalid[contextIndex] = true;
         }
@@ -161,11 +161,11 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 * @return The VertexBuffer3D object that contains vertex tangents.
 	 */
     public function activateVertexTangentBuffer(index:Int, stage3DProxy:Stage3DProxy):Void {
-        var contextIndex:Int = stage3DProxy._stage3DIndex;
-        var context:Context3D = stage3DProxy._context3D;
+        var contextIndex:Int = stage3DProxy.stage3DIndex;
+        var context:Context3D = stage3DProxy.context3D;
         if (_vertexTangentsDirty) _vertexTangents = updateVertexTangents(_vertexTangents);
         if (_vertexTangentBuffer[contextIndex] == null || _vertexTangentBufferContext[contextIndex] != context) {
-            _vertexTangentBuffer[contextIndex] = context.createVertexBuffer(_numVertices, 3);
+            _vertexTangentBuffer[contextIndex] = stage3DProxy.createVertexBuffer(_numVertices, 3);
             _vertexTangentBufferContext[contextIndex] = context;
             _tangentsInvalid[contextIndex] = true;
         }
@@ -192,16 +192,16 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
         clone.updateVertexData(_vertexData.copy());
         clone.updateUVData(_uvs.copy());
         clone.updateIndexData(_indices.copy());
-        
-        if (_secondaryUvs != null) 
+
+        if (_secondaryUvs != null)
             clone.updateSecondaryUVData(_secondaryUvs.copy());
-        
-        if (!_autoDeriveVertexNormals) 
+
+        if (!_autoDeriveVertexNormals)
             clone.updateVertexNormalData(_vertexNormals.copy());
-        
-        if (!_autoDeriveVertexTangents) 
+
+        if (!_autoDeriveVertexTangents)
             clone.updateVertexTangentData(_vertexTangents.copy());
-        
+
         return clone;
     }
 
@@ -255,11 +255,11 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     /**
 	 * The raw vertex position data.
 	 */
-    override public function get_vertexData():Vector<Float> {
+    override private function get_vertexData():Vector<Float> {
         return _vertexData;
     }
 
-    override public function get_vertexPositionData():Vector<Float> {
+    override private function get_vertexPositionData():Vector<Float> {
         return _vertexData;
     }
 
@@ -270,13 +270,13 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     public function updateVertexData(vertices:Vector<Float>):Void {
         if (_autoDeriveVertexNormals) _vertexNormalsDirty = true;
         if (_autoDeriveVertexTangents) _vertexTangentsDirty = true;
-        
+
         _faceNormalsDirty = true;
         _vertexData = vertices;
-        
+
         var numVertices:Int = Std.int(vertices.length / 3);
         if (numVertices != _numVertices) disposeAllVertexBuffers();
-        
+
         _numVertices = numVertices;
         invalidateBuffers(_verticesInvalid);
         invalidateBounds();
@@ -285,12 +285,12 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     /**
 	 * The raw texture coordinate data.
 	 */
-    override public function get_UVData():Vector<Float> {
+    override private function get_UVData():Vector<Float> {
         if (_uvsDirty && _autoGenerateUVs) _uvs = updateDummyUVs(_uvs);
         return _uvs;
     }
 
-    public function get_secondaryUVData():Vector<Float> {
+    private function get_secondaryUVData():Vector<Float> {
         return _secondaryUvs;
     }
 
@@ -314,7 +314,7 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     /**
 	 * The raw vertex normal data.
 	 */
-    override public function get_vertexNormalData():Vector<Float> {
+    override private function get_vertexNormalData():Vector<Float> {
         if (_autoDeriveVertexNormals && _vertexNormalsDirty) _vertexNormals = updateVertexNormals(_vertexNormals);
         return _vertexNormals;
     }
@@ -336,7 +336,7 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
 	 *
 	 * @private
 	 */
-    override public function get_vertexTangentData():Vector<Float> {
+    override private function get_vertexTangentData():Vector<Float> {
         if (_autoDeriveVertexTangents && _vertexTangentsDirty) _vertexTangents = updateVertexTangents(_vertexTangents);
         return _vertexTangents;
     }
@@ -377,70 +377,69 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
     }
 
     private function disposeForStage3D(stage3DProxy:Stage3DProxy):Void {
-        var index:Int = stage3DProxy._stage3DIndex;
+        var index:Int = stage3DProxy.stage3DIndex;
         if (_vertexBuffer[index] != null) {
-            _vertexBuffer[index].dispose();
+            Stage3DProxy.disposeVertexBuffer(_vertexBuffer[index]);
             _vertexBuffer[index] = null;
         }
         if (_uvBuffer[index] != null) {
-            _uvBuffer[index].dispose();
+            Stage3DProxy.disposeVertexBuffer(_uvBuffer[index]);
             _uvBuffer[index] = null;
         }
         if (_secondaryUvBuffer[index] != null) {
-            _secondaryUvBuffer[index].dispose();
+            Stage3DProxy.disposeVertexBuffer(_secondaryUvBuffer[index]);
             _secondaryUvBuffer[index] = null;
         }
         if (_vertexNormalBuffer[index] != null) {
-            _vertexNormalBuffer[index].dispose();
+            Stage3DProxy.disposeVertexBuffer(_vertexNormalBuffer[index]);
             _vertexNormalBuffer[index] = null;
         }
         if (_vertexTangentBuffer[index] != null) {
-            _vertexTangentBuffer[index].dispose();
+            Stage3DProxy.disposeVertexBuffer(_vertexTangentBuffer[index]);
             _vertexTangentBuffer[index] = null;
         }
         if (_indexBuffer[index] != null) {
-            _indexBuffer[index].dispose();
-            _indexBuffer[index] = null;
+            Stage3DProxy.disposeIndexBuffer(_indexBuffer[index]);
         }
     }
 
-    override public function get_vertexStride():Int {
+    override private function get_vertexStride():Int {
         return 3;
     }
 
-    override public function get_vertexTangentStride():Int {
+    override private function get_vertexTangentStride():Int {
         return 3;
     }
 
-    override public function get_vertexNormalStride():Int {
+    override private function get_vertexNormalStride():Int {
         return 3;
     }
 
-    override public function get_UVStride():Int {
+    override private function get_UVStride():Int {
         return 2;
     }
 
-    public function get_secondaryUVStride():Int {
+    private function get_secondaryUVStride():Int {
         return 2;
     }
 
-    override public function get_vertexOffset():Int {
+    override private function get_vertexOffset():Int {
         return 0;
     }
 
-    override public function get_vertexNormalOffset():Int {
+    override private function get_vertexNormalOffset():Int {
         return 0;
     }
 
-    override public function get_vertexTangentOffset():Int {
+    override private function get_vertexTangentOffset():Int {
         return 0;
     }
 
-    override public function get_UVOffset():Int {
+    override private function get_UVOffset():Int {
         return 0;
     }
 
-    public function get_secondaryUVOffset():Int {
+    private function get_secondaryUVOffset():Int {
         return 0;
     }
 
@@ -448,4 +447,3 @@ class SubGeometry extends SubGeometryBase implements ISubGeometry {
         return cast((clone()), SubGeometry);
     }
 }
-

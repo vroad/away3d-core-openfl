@@ -18,8 +18,8 @@ import openfl.geom.Matrix3D;
 import openfl.Vector;
 
 class ProjectiveTextureMethod extends EffectMethodBase {
-    public var mode(get_mode, set_mode):BlendMode;
-    public var projector(get_projector, set_projector):TextureProjector;
+    public var mode(get, set):BlendMode;
+    public var projector(get, set):TextureProjector;
 
     static public var MULTIPLY:BlendMode = BlendMode.MULTIPLY;
     static public var ADD:BlendMode = BlendMode.ADD;
@@ -36,11 +36,13 @@ class ProjectiveTextureMethod extends EffectMethodBase {
 	 *
 	 * @see away3d.entities.TextureProjector
 	 */
-    public function new(projector:TextureProjector, mode:BlendMode) {
+    public function new(projector:TextureProjector, mode:BlendMode = null) {
         _projMatrix = new Matrix3D();
+        
         super();
+        
         _projector = projector;
-        _mode = mode;
+        _mode = mode == null ? BlendMode.MULTIPLY : mode;
     }
 
     /**
@@ -69,11 +71,11 @@ class ProjectiveTextureMethod extends EffectMethodBase {
 	 * ProjectiveTextureMethod.ADD can be used to project light, such as a slide projector or light coming through stained glass. To prevent clamping, the texture's alpha should be black!
 	 * ProjectiveTextureMethod.MIX provides normal alpha blending. To prevent clamping, the texture's alpha should be transparent!
 	 */
-    public function get_mode():BlendMode {
+    private function get_mode():BlendMode {
         return _mode;
     }
 
-    public function set_mode(value:BlendMode):BlendMode {
+    private function set_mode(value:BlendMode):BlendMode {
         if (_mode == value) return value;
         _mode = value;
         invalidateShaderProgram();
@@ -85,11 +87,11 @@ class ProjectiveTextureMethod extends EffectMethodBase {
 	 *
 	 * @see away3d.entities.TextureProjector
 	 */
-    public function get_projector():TextureProjector {
+    private function get_projector():TextureProjector {
         return _projector;
     }
 
-    public function set_projector(value:TextureProjector):TextureProjector {
+    private function set_projector(value:TextureProjector):TextureProjector {
         _projector = value;
         return value;
     }
@@ -103,8 +105,11 @@ class ProjectiveTextureMethod extends EffectMethodBase {
         regCache.getFreeVertexConstant();
         regCache.getFreeVertexConstant();
         regCache.getFreeVertexVectorTemp();
+        
         vo.vertexConstantsIndex = projReg.index * 4;
+        
         _uvVarying = regCache.getFreeVarying();
+        
         return "m44 " + _uvVarying + ", vt0, " + projReg + "\n";
     }
 
@@ -116,17 +121,26 @@ class ProjectiveTextureMethod extends EffectMethodBase {
         var mapRegister:ShaderRegisterElement = regCache.getFreeTextureReg();
         var col:ShaderRegisterElement = regCache.getFreeFragmentVectorTemp();
         var toTexReg:ShaderRegisterElement = regCache.getFreeFragmentConstant();
+        
         vo.fragmentConstantsIndex = toTexReg.index * 4;
         vo.texturesIndex = mapRegister.index;
-        code += "div " + col + ", " + _uvVarying + ", " + _uvVarying + ".w						\n" + "mul " + col + ".xy, " + col + ".xy, " + toTexReg + ".xy	\n" + "add " + col + ".xy, " + col + ".xy, " + toTexReg + ".xx	\n";
+        
+        code += "div " + col + ", " + _uvVarying + ", " + _uvVarying + ".w	\n" + 
+                "mul " + col + ".xy, " + col + ".xy, " + toTexReg + ".xy	\n" + 
+                "add " + col + ".xy, " + col + ".xy, " + toTexReg + ".xx	\n";
         code += getTex2DSampleCode(vo, col, mapRegister, _projector.texture, col, "clamp");
-        if (_mode == MULTIPLY) code += "mul " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n"
-        else if (_mode == ADD) code += "add " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n"
+        
+        if (_mode == MULTIPLY) 
+            code += "mul " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n"
+        else if (_mode == ADD) 
+            code += "add " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n"
         else if (_mode == MIX) {
-            code += "sub " + col + ".xyz, " + col + ".xyz, " + targetReg + ".xyz				\n" + "mul " + col + ".xyz, " + col + ".xyz, " + col + ".w						\n" + "add " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n";
-        }
+            code += "sub " + col + ".xyz, " + col + ".xyz, " + targetReg + ".xyz				\n" + 
+                    "mul " + col + ".xyz, " + col + ".xyz, " + col + ".w						\n" + 
+                    "add " + targetReg + ".xyz, " + targetReg + ".xyz, " + col + ".xyz			\n";
+        } else 
+            throw new Error("Unknown mode \"" + _mode + "\"");
 
-        else throw new Error("Unknown mode \"" + _mode + "\"");
         return code;
     }
 
@@ -143,7 +157,7 @@ class ProjectiveTextureMethod extends EffectMethodBase {
 	 * @inheritDoc
 	 */
     override public function activate(vo:MethodVO, stage3DProxy:Stage3DProxy):Void {
-        stage3DProxy._context3D.setTextureAt(vo.texturesIndex, _projector.texture.getTextureForStage3D(stage3DProxy));
+        stage3DProxy.context3D.setTextureAt(vo.texturesIndex, _projector.texture.getTextureForStage3D(stage3DProxy));
     }
 }
 

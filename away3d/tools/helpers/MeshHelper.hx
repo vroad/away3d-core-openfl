@@ -21,7 +21,7 @@ import away3d.tools.utils.GeomUtil;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
 import haxe.ds.StringMap.StringMap;
-
+import openfl.Vector;
 
 /**
  * Helper Class for the Mesh object <code>MeshHelper</code>
@@ -340,7 +340,7 @@ class MeshHelper {
         for (i in 0...numSubGeoms) {
             subGeom = cast(geometries[i], ISubGeometry);
             indices = subGeom.indexData;
-            indicesC = subGeom.indexData.concat();
+            indicesC = subGeom.indexData.concat(new Vector<UInt>());
 
             normals = subGeom.vertexNormalData;
             nOffs = subGeom.vertexNormalOffset;

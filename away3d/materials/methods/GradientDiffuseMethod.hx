@@ -13,7 +13,7 @@ import away3d.materials.compilation.ShaderRegisterElement;
 import away3d.textures.Texture2DBase;
 
 class GradientDiffuseMethod extends BasicDiffuseMethod {
-    public var gradient(get_gradient, set_gradient):Texture2DBase;
+    public var gradient(get, set):Texture2DBase;
 
     private var _gradientTextureRegister:ShaderRegisterElement;
     private var _gradient:Texture2DBase;
@@ -31,11 +31,11 @@ class GradientDiffuseMethod extends BasicDiffuseMethod {
 	 * A texture that contains the light colour based on the angle. This can be used to change the light colour
 	 * due to subsurface scattering when the surface faces away from the light.
 	 */
-    public function get_gradient():Texture2DBase {
+    private function get_gradient():Texture2DBase {
         return _gradient;
     }
 
-    public function set_gradient(value:Texture2DBase):Texture2DBase {
+    private function set_gradient(value:Texture2DBase):Texture2DBase {
         if (value.hasMipMaps != _gradient.hasMipMaps || value.format != _gradient.format) invalidateShaderProgram();
         _gradient = value;
         return value;
@@ -101,7 +101,7 @@ class GradientDiffuseMethod extends BasicDiffuseMethod {
 	 */
     override public function activate(vo:MethodVO, stage3DProxy:Stage3DProxy):Void {
         super.activate(vo, stage3DProxy);
-        stage3DProxy._context3D.setTextureAt(vo.secondaryTexturesIndex, _gradient.getTextureForStage3D(stage3DProxy));
+        stage3DProxy.context3D.setTextureAt(vo.secondaryTexturesIndex, _gradient.getTextureForStage3D(stage3DProxy));
     }
 }
 

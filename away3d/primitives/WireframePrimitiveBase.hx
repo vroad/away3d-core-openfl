@@ -8,8 +8,8 @@ import away3d.primitives.data.Segment;
 import openfl.geom.Vector3D;
 
 class WireframePrimitiveBase extends SegmentSet {
-    public var color(get_color, set_color):Int;
-    public var thickness(get_thickness, set_thickness):Float;
+    public var color(get, set):Int;
+    public var thickness(get, set):Float;
 
     private var _geomDirty:Bool;
     private var _color:Int;
@@ -24,11 +24,11 @@ class WireframePrimitiveBase extends SegmentSet {
         super();
     }
 
-    public function get_color():Int {
+    private function get_color():Int {
         return _color;
     }
 
-    public function set_color(value:Int):Int {
+    private function set_color(value:Int):Int {
         _color = value;
         for (segRef in _segments) {
             segRef.segment.startColor = segRef.segment.endColor = value;
@@ -37,11 +37,11 @@ class WireframePrimitiveBase extends SegmentSet {
         return value;
     }
 
-    public function get_thickness():Float {
+    private function get_thickness():Float {
         return _thickness;
     }
 
-    public function set_thickness(value:Float):Float {
+    private function set_thickness(value:Float):Float {
         _thickness = value;
         for (segRef in _segments) {
             segRef.segment.thickness = segRef.segment.thickness = value;
@@ -54,7 +54,7 @@ class WireframePrimitiveBase extends SegmentSet {
         super.removeAllSegments();
     }
 
-    override public function get_bounds():BoundingVolumeBase {
+    override private function get_bounds():BoundingVolumeBase {
         if (_geomDirty) updateGeometry();
         return super.bounds;
     }

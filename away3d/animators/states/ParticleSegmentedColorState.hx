@@ -10,14 +10,15 @@ import away3d.cameras.Camera3D;
 import away3d.core.base.IRenderable;
 import away3d.core.managers.Stage3DProxy;
 import openfl.geom.ColorTransform;
+import openfl.Vector;
 
 class ParticleSegmentedColorState extends ParticleStateBase {
-    public var startColor(get_startColor, set_startColor):ColorTransform;
-    public var endColor(get_endColor, set_endColor):ColorTransform;
-    public var numSegmentPoint(get_numSegmentPoint, never):Int;
-    public var segmentPoints(get_segmentPoints, set_segmentPoints):Vector<ColorSegmentPoint>;
-    public var usesMultiplier(get_usesMultiplier, never):Bool;
-    public var usesOffset(get_usesOffset, never):Bool;
+    public var startColor(get, set):ColorTransform;
+    public var endColor(get, set):ColorTransform;
+    public var numSegmentPoint(get, never):Int;
+    public var segmentPoints(get, set):Vector<ColorSegmentPoint>;
+    public var usesMultiplier(get, never):Bool;
+    public var usesOffset(get, never):Bool;
 
     private var _usesMultiplier:Bool;
     private var _usesOffset:Bool;
@@ -31,11 +32,11 @@ class ParticleSegmentedColorState extends ParticleStateBase {
     /**
 	 * Defines the start color transform of the state, when in global mode.
 	 */
-    public function get_startColor():ColorTransform {
+    private function get_startColor():ColorTransform {
         return _startColor;
     }
 
-    public function set_startColor(value:ColorTransform):ColorTransform {
+    private function set_startColor(value:ColorTransform):ColorTransform {
         _startColor = value;
         updateColorData();
         return value;
@@ -44,11 +45,11 @@ class ParticleSegmentedColorState extends ParticleStateBase {
     /**
 	 * Defines the end color transform of the state, when in global mode.
 	 */
-    public function get_endColor():ColorTransform {
+    private function get_endColor():ColorTransform {
         return _endColor;
     }
 
-    public function set_endColor(value:ColorTransform):ColorTransform {
+    private function set_endColor(value:ColorTransform):ColorTransform {
         _endColor = value;
         updateColorData();
         return value;
@@ -57,28 +58,28 @@ class ParticleSegmentedColorState extends ParticleStateBase {
     /**
 	 * Defines the number of segments.
 	 */
-    public function get_numSegmentPoint():Int {
+    private function get_numSegmentPoint():Int {
         return _numSegmentPoint;
     }
 
     /**
 	 * Defines the key points of color
 	 */
-    public function get_segmentPoints():Vector<ColorSegmentPoint> {
+    private function get_segmentPoints():Vector<ColorSegmentPoint> {
         return _segmentPoints;
     }
 
-    public function set_segmentPoints(value:Vector<ColorSegmentPoint>):Vector<ColorSegmentPoint> {
+    private function set_segmentPoints(value:Vector<ColorSegmentPoint>):Vector<ColorSegmentPoint> {
         _segmentPoints = value;
         updateColorData();
         return value;
     }
 
-    public function get_usesMultiplier():Bool {
+    private function get_usesMultiplier():Bool {
         return _usesMultiplier;
     }
 
-    public function get_usesOffset():Bool {
+    private function get_usesOffset():Bool {
         return _usesOffset;
     }
 

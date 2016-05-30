@@ -21,7 +21,7 @@ import away3d.events.ShadingMethodEvent;
 import openfl.Vector;
 
 class CascadeShadowMapMethod extends ShadowMapMethodBase {
-    public var baseMethod(get_baseMethod, set_baseMethod):SimpleShadowMapMethodBase;
+    public var baseMethod(get, set):SimpleShadowMapMethodBase;
 
     private var _baseMethod:SimpleShadowMapMethodBase;
     private var _cascadeShadowMapper:CascadeShadowMapper;
@@ -49,11 +49,11 @@ class CascadeShadowMapMethod extends ShadowMapMethodBase {
 	 * @see HardShadowMapMethod
 	 * @see SoftShadowMapMethod
 	 */
-    public function get_baseMethod():SimpleShadowMapMethodBase {
+    private function get_baseMethod():SimpleShadowMapMethodBase {
         return _baseMethod;
     }
 
-    public function set_baseMethod(value:SimpleShadowMapMethodBase):SimpleShadowMapMethodBase {
+    private function set_baseMethod(value:SimpleShadowMapMethodBase):SimpleShadowMapMethodBase {
         if (_baseMethod == value) return value;
         _baseMethod.removeEventListener(ShadingMethodEvent.SHADER_INVALIDATED, onShaderInvalidated);
         _baseMethod = value;
@@ -186,7 +186,7 @@ class CascadeShadowMapMethod extends ShadowMapMethodBase {
 	 * @inheritDoc
 	 */
     override public function activate(vo:MethodVO, stage3DProxy:Stage3DProxy):Void {
-        stage3DProxy._context3D.setTextureAt(vo.texturesIndex, _castingLight.shadowMapper.depthMap.getTextureForStage3D(stage3DProxy));
+        stage3DProxy.context3D.setTextureAt(vo.texturesIndex, _castingLight.shadowMapper.depthMap.getTextureForStage3D(stage3DProxy));
         var vertexData:Vector<Float> = vo.vertexData;
         var vertexIndex:Int = vo.vertexConstantsIndex;
         vo.vertexData[vo.vertexConstantsIndex + 3] = -1 / (_cascadeShadowMapper.depth * _epsilon);

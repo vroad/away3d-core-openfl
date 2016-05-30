@@ -10,8 +10,8 @@ import openfl.display3D.textures.TextureBase;
 import openfl.Vector;
 
 class Filter3DXFadeCompositeTask extends Filter3DTaskBase {
-    public var overlayTexture(get_overlayTexture, set_overlayTexture):TextureBase;
-    public var amount(get_amount, set_amount):Float;
+    public var overlayTexture(get, set):TextureBase;
+    public var amount(get, set):Float;
 
     private var _data:Vector<Float>;
     private var _overlayTexture:TextureBase;
@@ -23,20 +23,20 @@ class Filter3DXFadeCompositeTask extends Filter3DTaskBase {
         _data = [amount, 0, 0, 0];
     }
 
-    public function get_overlayTexture():TextureBase {
+    private function get_overlayTexture():TextureBase {
         return _overlayTexture;
     }
 
-    public function set_overlayTexture(value:TextureBase):TextureBase {
+    private function set_overlayTexture(value:TextureBase):TextureBase {
         _overlayTexture = value;
         return value;
     }
 
-    public function get_amount():Float {
+    private function get_amount():Float {
         return _data[0];
     }
 
-    public function set_amount(value:Float):Float {
+    private function set_amount(value:Float):Float {
         _data[0] = value;
         return value;
     }
@@ -46,13 +46,13 @@ class Filter3DXFadeCompositeTask extends Filter3DTaskBase {
     }
 
     override public function activate(stage3DProxy:Stage3DProxy, camera3D:Camera3D, depthTexture:Texture):Void {
-        var context:Context3D = stage3DProxy._context3D;
+        var context:Context3D = stage3DProxy.context3D;
         context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, _data, 1);
         context.setTextureAt(1, _overlayTexture);
     }
 
     override public function deactivate(stage3DProxy:Stage3DProxy):Void {
-        stage3DProxy._context3D.setTextureAt(1, null);
+        stage3DProxy.context3D.setTextureAt(1, null);
     }
 }
 

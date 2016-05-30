@@ -18,12 +18,13 @@ import away3d.core.traverse.EntityCollector;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.TextureBase;
 import openfl.geom.Vector3D;
+import openfl.Vector;
 
 class CubeReflectionTexture extends RenderCubeTexture {
-    public var position(get_position, set_position):Vector3D;
-    public var nearPlaneDistance(get_nearPlaneDistance, set_nearPlaneDistance):Float;
-    public var farPlaneDistance(get_farPlaneDistance, set_farPlaneDistance):Float;
-    public var renderer(get_renderer, set_renderer):RendererBase;
+    public var position(get, set):Vector3D;
+    public var nearPlaneDistance(get, set):Float;
+    public var farPlaneDistance(get, set):Float;
+    public var renderer(get, set):RendererBase;
 
     private var _mockTexture:BitmapCubeTexture;
     private var _mockBitmapData:BitmapData;
@@ -60,11 +61,11 @@ class CubeReflectionTexture extends RenderCubeTexture {
     /**
 	 * The origin where the environment map will be rendered. This is usually in the centre of the reflective object.
 	 */
-    public function get_position():Vector3D {
+    private function get_position():Vector3D {
         return _position;
     }
 
-    public function set_position(value:Vector3D):Vector3D {
+    private function set_position(value:Vector3D):Vector3D {
         _position = value;
         return value;
     }
@@ -72,11 +73,11 @@ class CubeReflectionTexture extends RenderCubeTexture {
     /**
 	 * The near plane used by the camera lens.
 	 */
-    public function get_nearPlaneDistance():Float {
+    private function get_nearPlaneDistance():Float {
         return _nearPlaneDistance;
     }
 
-    public function set_nearPlaneDistance(value:Float):Float {
+    private function set_nearPlaneDistance(value:Float):Float {
         _nearPlaneDistance = value;
         return value;
     }
@@ -84,11 +85,11 @@ class CubeReflectionTexture extends RenderCubeTexture {
     /**
 	 * The far plane of the camera lens. Can be used to cut off objects that are too far to be of interest in reflections
 	 */
-    public function get_farPlaneDistance():Float {
+    private function get_farPlaneDistance():Float {
         return _farPlaneDistance;
     }
 
-    public function set_farPlaneDistance(value:Float):Float {
+    private function set_farPlaneDistance(value:Float):Float {
         _farPlaneDistance = value;
         return value;
     }
@@ -114,11 +115,11 @@ class CubeReflectionTexture extends RenderCubeTexture {
     /**
 	 * The renderer to use.
 	 */
-    public function get_renderer():RendererBase {
+    private function get_renderer():RendererBase {
         return _renderer;
     }
 
-    public function set_renderer(value:RendererBase):RendererBase {
+    private function set_renderer(value:RendererBase):RendererBase {
         _renderer.dispose();
         _renderer = value;
         _entityCollector = _renderer.createEntityCollector();

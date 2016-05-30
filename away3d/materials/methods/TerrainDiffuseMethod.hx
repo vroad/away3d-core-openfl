@@ -105,7 +105,7 @@ class TerrainDiffuseMethod extends BasicDiffuseMethod {
 	 * @inheritDoc
 	 */
     override public function activate(vo:MethodVO, stage3DProxy:Stage3DProxy):Void {
-        var context:Context3D = stage3DProxy._context3D;
+        var context:Context3D = stage3DProxy.context3D;
         var i:Int;
         var texIndex:Int = vo.texturesIndex;
         super.activate(vo, stage3DProxy);
@@ -121,7 +121,7 @@ class TerrainDiffuseMethod extends BasicDiffuseMethod {
     /**
 	 * @inheritDoc
 	 */
-    override public function set_alphaThreshold(value:Float):Float {
+    override private function set_alphaThreshold(value:Float):Float {
         if (value > 0) throw new Error("Alpha threshold not supported for TerrainDiffuseMethod");
         return value;
     }

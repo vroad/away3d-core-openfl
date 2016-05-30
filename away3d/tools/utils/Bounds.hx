@@ -12,21 +12,22 @@ import away3d.lights.LightBase;
 import haxe.ds.ObjectMap;
 import away3d.entities.Entity;
 import openfl.geom.Matrix3D;
+import openfl.Vector;
 
 import away3d.containers.ObjectContainer3D;
 import away3d.entities.Mesh;
 import openfl.geom.Vector3D;
 
 class Bounds {
-    static public var minX(get_minX, never):Float;
-    static public var minY(get_minY, never):Float;
-    static public var minZ(get_minZ, never):Float;
-    static public var maxX(get_maxX, never):Float;
-    static public var maxY(get_maxY, never):Float;
-    static public var maxZ(get_maxZ, never):Float;
-    static public var width(get_width, never):Float;
-    static public var height(get_height, never):Float;
-    static public var depth(get_depth, never):Float;
+    static public var minX(get, never):Float;
+    static public var minY(get, never):Float;
+    static public var minZ(get, never):Float;
+    static public var maxX(get, never):Float;
+    static public var maxY(get, never):Float;
+    static public var maxZ(get, never):Float;
+    static public var width(get, never):Float;
+    static public var height(get, never):Float;
+    static public var depth(get, never):Float;
 
     static private var _minX:Float;
     static private var _minY:Float;
@@ -117,7 +118,7 @@ class Bounds {
 	 * @return the smalest x value
 	 */
 
-    static public function get_minX():Float {
+    static private function get_minX():Float {
         return _minX;
     }
 
@@ -125,7 +126,7 @@ class Bounds {
 	 * @return the smalest y value
 	 */
 
-    static public function get_minY():Float {
+    static private function get_minY():Float {
         return _minY;
     }
 
@@ -133,7 +134,7 @@ class Bounds {
 	 * @return the smalest z value
 	 */
 
-    static public function get_minZ():Float {
+    static private function get_minZ():Float {
         return _minZ;
     }
 
@@ -141,7 +142,7 @@ class Bounds {
 	 * @return the biggest x value
 	 */
 
-    static public function get_maxX():Float {
+    static private function get_maxX():Float {
         return _maxX;
     }
 
@@ -149,7 +150,7 @@ class Bounds {
 	 * @return the biggest y value
 	 */
 
-    static public function get_maxY():Float {
+    static private function get_maxY():Float {
         return _maxY;
     }
 
@@ -157,7 +158,7 @@ class Bounds {
 	 * @return the biggest z value
 	 */
 
-    static public function get_maxZ():Float {
+    static private function get_maxZ():Float {
         return _maxZ;
     }
 
@@ -165,7 +166,7 @@ class Bounds {
 	 * @return the width value from the bounds
 	 */
 
-    static public function get_width():Float {
+    static private function get_width():Float {
         return _maxX - _minX;
     }
 
@@ -173,7 +174,7 @@ class Bounds {
 	 * @return the height value from the bounds
 	 */
 
-    static public function get_height():Float {
+    static private function get_height():Float {
         return _maxY - _minY;
     }
 
@@ -181,7 +182,7 @@ class Bounds {
 	 * @return the depth value from the bounds
 	 */
 
-    static public function get_depth():Float {
+    static private function get_depth():Float {
         return _maxZ - _minZ;
     }
 

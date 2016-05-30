@@ -6,12 +6,13 @@ import away3d.core.managers.Stage3DProxy;
 import openfl.display3D.Context3D;
 import openfl.display3D.Context3DProgramType;
 import openfl.display3D.textures.Texture;
+import openfl.Vector;
 
 class Filter3DHDepthOfFFieldTask extends Filter3DTaskBase {
-    public var stepSize(get_stepSize, set_stepSize):Int;
-    public var range(get_range, set_range):Float;
-    public var focusDistance(get_focusDistance, set_focusDistance):Float;
-    public var maxBlur(get_maxBlur, set_maxBlur):Int;
+    public var stepSize(get, set):Int;
+    public var range(get, set):Float;
+    public var focusDistance(get, set):Float;
+    public var maxBlur(get, set):Int;
 
     static private var MAX_AUTO_SAMPLES:Int = 10;
     private var _maxBlur:Int;
@@ -29,15 +30,15 @@ class Filter3DHDepthOfFFieldTask extends Filter3DTaskBase {
         _range = 1000;
         super(true);
         _maxBlur = maxBlur;
-        _data = Vector.ofArray(cast [0, 0, 0, _focusDistance, 0, 0, 0, 0, _range, 0, 0, 0, 1.0, 1 / 255.0, 1 / 65025.0, 1 / 16581375.0]);
+        _data = [ 0.0, 0.0, 0.0, _focusDistance, 0.0, 0.0, 0.0, 0.0, _range, 0.0, 0.0, 0.0, 1.0, 1.0 / 255.0, 1 / 65025.0, 1 / 16581375.0 ];
         this.stepSize = stepSize;
     }
 
-    public function get_stepSize():Int {
+    private function get_stepSize():Int {
         return _stepSize;
     }
 
-    public function set_stepSize(value:Int):Int {
+    private function set_stepSize(value:Int):Int {
         if (value == _stepSize) return value;
         _stepSize = value;
         calculateStepSize();
@@ -46,30 +47,30 @@ class Filter3DHDepthOfFFieldTask extends Filter3DTaskBase {
         return value;
     }
 
-    public function get_range():Float {
+    private function get_range():Float {
         return _range;
     }
 
-    public function set_range(value:Float):Float {
+    private function set_range(value:Float):Float {
         _range = value;
         _data[8] = 1 / value;
         return value;
     }
 
-    public function get_focusDistance():Float {
+    private function get_focusDistance():Float {
         return _focusDistance;
     }
 
-    public function set_focusDistance(value:Float):Float {
+    private function set_focusDistance(value:Float):Float {
         _data[3] = _focusDistance = value;
         return value;
     }
 
-    public function get_maxBlur():Int {
+    private function get_maxBlur():Int {
         return _maxBlur;
     }
 
-    public function set_maxBlur(value:Int):Int {
+    private function set_maxBlur(value:Int):Int {
         if (_maxBlur == value) return value;
         _maxBlur = value;
         invalidateProgram3D();
@@ -110,7 +111,7 @@ class Filter3DHDepthOfFFieldTask extends Filter3DTaskBase {
     }
 
     override public function activate(stage3DProxy:Stage3DProxy, camera:Camera3D, depthTexture:Texture):Void {
-        var context:Context3D = stage3DProxy._context3D;
+        var context:Context3D = stage3DProxy.context3D;
         var n:Float = camera.lens.near;
         var f:Float = camera.lens.far;
         _data[6] = f / (f - n);
@@ -120,7 +121,7 @@ class Filter3DHDepthOfFFieldTask extends Filter3DTaskBase {
     }
 
     override public function deactivate(stage3DProxy:Stage3DProxy):Void {
-        stage3DProxy._context3D.setTextureAt(1, null);
+        stage3DProxy.context3D.setTextureAt(1, null);
     }
 
     override private function updateTextures(stage:Stage3DProxy):Void {

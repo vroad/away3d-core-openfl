@@ -9,12 +9,13 @@ import away3d.cameras.Camera3D;
 import away3d.core.base.IRenderable;
 import away3d.core.managers.Stage3DProxy;
 import openfl.geom.Vector3D;
+import openfl.Vector;
 
 class ParticleSegmentedScaleState extends ParticleStateBase {
-    public var startScale(get_startScale, set_startScale):Vector3D;
-    public var endScale(get_endScale, set_endScale):Vector3D;
-    public var numSegmentPoint(get_numSegmentPoint, never):Int;
-    public var segmentPoints(get_segmentPoints, set_segmentPoints):Vector<Vector3D>;
+    public var startScale(get, set):Vector3D;
+    public var endScale(get, set):Vector3D;
+    public var numSegmentPoint(get, never):Int;
+    public var segmentPoints(get, set):Vector<Vector3D>;
 
     private var _startScale:Vector3D;
     private var _endScale:Vector3D;
@@ -24,11 +25,11 @@ class ParticleSegmentedScaleState extends ParticleStateBase {
     /**
 	 * Defines the start scale of the state, when in global mode.
 	 */
-    public function get_startScale():Vector3D {
+    private function get_startScale():Vector3D {
         return _startScale;
     }
 
-    public function set_startScale(value:Vector3D):Vector3D {
+    private function set_startScale(value:Vector3D):Vector3D {
         _startScale = value;
         updateScaleData();
         return value;
@@ -37,11 +38,11 @@ class ParticleSegmentedScaleState extends ParticleStateBase {
     /**
 	 * Defines the end scale of the state, when in global mode.
 	 */
-    public function get_endScale():Vector3D {
+    private function get_endScale():Vector3D {
         return _endScale;
     }
 
-    public function set_endScale(value:Vector3D):Vector3D {
+    private function set_endScale(value:Vector3D):Vector3D {
         _endScale = value;
         updateScaleData();
         return value;
@@ -50,18 +51,18 @@ class ParticleSegmentedScaleState extends ParticleStateBase {
     /**
 	 * Defines the number of segments.
 	 */
-    public function get_numSegmentPoint():Int {
+    private function get_numSegmentPoint():Int {
         return _numSegmentPoint;
     }
 
     /**
 	 * Defines the key points of Scale
 	 */
-    public function get_segmentPoints():Vector<Vector3D> {
+    private function get_segmentPoints():Vector<Vector3D> {
         return _segmentPoints;
     }
 
-    public function set_segmentPoints(value:Vector<Vector3D>):Vector<Vector3D> {
+    private function set_segmentPoints(value:Vector<Vector3D>):Vector<Vector3D> {
         _segmentPoints = value;
         updateScaleData();
         return value;
